@@ -3,6 +3,7 @@ from PySide6.QtGui import QIcon
 
 from ui.topbar import TopBar
 from ui.dialog import Dialog
+from ui.footer import Footer
 
 
 class MainWindow(QMainWindow):
@@ -40,6 +41,10 @@ class MainWindow(QMainWindow):
 
         # Добавляем растягивающийся элемент, чтобы TopBar оставался сверху
         main_layout.addStretch()
+
+        # Добавляем Footer в нижнюю часть
+        self.footer = Footer()
+        main_layout.addWidget(self.footer)
 
         # Устанавливаем основной виджет в качестве центрального виджета
         self.setCentralWidget(main_layout_widget)
