@@ -1,19 +1,16 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtCore import Qt, QSize
-
 
 class TopBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
 
-    def init_ui(self):
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(1)
 
-        # Верхний ряд с кнопками и названием
-        top_layout = QHBoxLayout()
+    def init_ui(self):
+        main_layout = QHBoxLayout()
+        main_layout.setSpacing(1)
 
         # Создание кнопок и установка размеров
         self.account_button = QPushButton()
@@ -51,22 +48,8 @@ class TopBar(QWidget):
             }
         """)
 
-        top_layout.addWidget(self.account_button)
-        top_layout.addWidget(self.app_name_label)
-        top_layout.addWidget(self.about_button)
-
-        main_layout.addLayout(top_layout)
-
-        # Нижний ряд с описанием
-        bottom_layout = QHBoxLayout()
-
-        self.app_description_label = QLabel("Better Every Day")
-        self.app_description_label.setAlignment(Qt.AlignCenter)
-        font = QFont("Georgia", 12)
-        self.app_description_label.setFont(font)
-
-        bottom_layout.addWidget(self.app_description_label)
-
-        main_layout.addLayout(bottom_layout)
+        main_layout.addWidget(self.account_button)
+        main_layout.addWidget(self.app_name_label)
+        main_layout.addWidget(self.about_button)
 
         self.setLayout(main_layout)
