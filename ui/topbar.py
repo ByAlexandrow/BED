@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtCore import Qt, QSize
 
+
 class TopBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
