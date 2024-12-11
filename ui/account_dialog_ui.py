@@ -7,7 +7,7 @@ class AccountDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("BED - Account")
-        self.setFixedSize(800, 625)
+        self.setFixedSize(550, 650)
 
         # Основной вертикальный макет
         layout = QVBoxLayout()

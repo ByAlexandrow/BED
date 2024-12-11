@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("BED - Better Every Day")
 
         # Устанавливаем размеры окна
-        self.setGeometry(100, 100, 1300, 750)  # Ширина: 800, Высота: 600
+        self.setGeometry(100, 100, 1300, 750)
 
         # Инициализируем интерфейс
         self.init_ui()

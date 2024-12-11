@@ -21,29 +21,3 @@ class AboutDialogUI(QDialog):
         layout.addWidget(self.label)
 
         self.setLayout(layout)
-
-        # self.label.mousePressEvent = self.on_label_click
-
-    
-    # def on_label_click(self, event):
-    #     cursor = QCursor()
-    #     cursor_position = cursor.pos()
-    #     text = self.label.text()
-    #     if "DIE" in text:
-    #         self.label.setText(text.replace("DIE", ""))
-    #         self.die_explosion()
-    
-
-    # def die_explosion(self):
-    #     screen_geometry = QApplication.primaryScreen().geometry()
-    #     for _ in range(350):
-    #         label = QLabel("DIE", self)
-    #         label.setFont(QFont("Arial", 25, QFont.Bold))
-    #         label.setStyleSheet("color: red;")
-    #         label.move(random.randint(0, screen_geometry.width()), random.randint(0, screen_geometry.height()))
-    #         label.show()
-    #     QTimer.singleShot(2000, self.shutdown)
-
-
-    def shutdown(self):
-        QApplication.quit()

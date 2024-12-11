@@ -6,9 +6,9 @@ from PySide6.QtGui import QIcon, QFont
 class ChatButtonUI(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedSize(50, 50)  # Фиксированный размер кнопки
-        self.setIcon(QIcon("resources/icons/chat.png"))  # Иконка чата
-        self.setIconSize(QSize(50, 50))  # Размер иконки
+        self.setFixedSize(50, 50)
+        self.setIcon(QIcon("resources/icons/chat.png")) 
+        self.setIconSize(QSize(50, 50))
         self.setStyleSheet("""
             QPushButton {
                 background-color: rgba(0, 0, 0, 0.1);
