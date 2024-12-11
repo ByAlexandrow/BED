@@ -146,16 +146,6 @@ class TaskManagerUI(QWidget):
         # Кнопка "Удалить"
         delete_button = QPushButton("❌")
         delete_button.setFixedSize(QSize(30, 30))
-        delete_button.setStyleSheet("""
-            QPushButton {
-                background-color: rgba(255, 0, 0, 0.1);
-                border-radius: 15px;
-                border: 1px solid red;
-            }
-            QPushButton:hover {
-                background-color: rgba(255, 0, 0, 0.2);
-            }
-        """)
         delete_button.clicked.connect(lambda: self.delete_task(task_label.text(), item))
         task_layout.addWidget(delete_button)
 
