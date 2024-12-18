@@ -28,11 +28,17 @@ class ChatDialogUI(QDialog):
 
         layout = QVBoxLayout()
 
-        self.label = QLabel("Hi")
+        self.label = QLabel("Hi\nWrite me if something works wrong or even doesn't work\nYou can do it here\n")
         self.label.setAlignment(Qt.AlignCenter)
         font = QFont("Georgia", 12)
         self.label.setFont(font)
 
+        self.social_label = QLabel("Or you can write me here:\n")
+        self.social_label.setAlignment(Qt.AlignCenter)
+        font = QFont("Georgia", 12)
+        self.social_label.setFont(font)
+
         layout.addWidget(self.label)
+        layout.addWidget(self.social_label)
 
         self.setLayout(layout)
