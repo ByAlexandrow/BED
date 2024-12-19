@@ -129,7 +129,6 @@ class TaskManagerUI(QWidget):
         # Чекбокс для отметки выполненной задачи
         checkbox = QCheckBox()
         checkbox.setFixedSize(QSize(20, 20))
-        checkbox.stateChanged.connect(lambda state: self.mark_task_completed(task_text, state))
         task_layout.addWidget(checkbox)
 
         # Текст задачи
@@ -197,14 +196,8 @@ class TaskManagerUI(QWidget):
     def load_tasks(self):
         """Загружает задачи из базы данных."""
         tasks = load_tasks_from_task_db()
-        for name, description, completed in tasks:
+        for name, description in tasks:
             self.add_task_item(name, description)
-            # Отмечаем задачу как выполненную, если completed == 1
-            if completed:
-                item = self.task_list.item(self.task_list.count() - 1)
-                widget = self.task_list.itemWidget(item)
-                checkbox = widget.layout().itemAt(0).widget()
-                checkbox.setChecked(True)
 
         # Обновляем текст в зависимости от наличия задач
         self.update_empty_label()

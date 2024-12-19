@@ -9,8 +9,7 @@ def create_task_db():
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            description TEXT,
-            completed BOOLEAN DEFAULT 0
+            description TEXT
         )
     ''')
     conn.commit()
@@ -30,7 +29,7 @@ def load_tasks_from_task_db():
     """Загружает задачи из базы данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT name, description, completed FROM tasks')
+    cursor.execute('SELECT name, description FROM tasks')
     tasks = cursor.fetchall()
     conn.close()
     return tasks
