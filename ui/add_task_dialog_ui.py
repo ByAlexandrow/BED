@@ -8,7 +8,7 @@ class AddTaskDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("BED - New Task")
-        self.setFixedSize(325, 450)
+        self.setFixedSize(425, 425)
 
         # Основной макет
         layout = QVBoxLayout(self)
@@ -138,9 +138,39 @@ class AddTaskDialog(QDialog):
         # Инициализация выбранного уровня
         self.selected_level = None
 
+
     def set_level(self, level):
         """Устанавливает выбранный уровень сложности."""
         self.selected_level = level
+    
+
+    def accept(self):
+        """Проверяет, что поле "Название" заполнено перед закрытием диалога."""
+        if not self.task_name_edit.text().strip():
+            # Подсвечиваем поле "Название" красным цветом, если оно пустое
+            self.task_name_edit.setStyleSheet("""
+                QLineEdit {
+                    background-color: rgba(255, 0, 0, 0.4);
+                    border: 1px solid #ff0000;
+                    border-radius: 15px;
+                    color: white;
+                    padding: 5px;
+                }
+            """)
+            return  # Прерываем выполнение, если поле пустое
+
+        # Если поле заполнено, сбрасываем стиль и продолжаем с закрытием диалога
+        self.task_name_edit.setStyleSheet("""
+            QLineEdit {
+                background-color: rgba(0, 0, 0, 0.4);
+                border: 1px solid #ccc;
+                border-radius: 15px;
+                color: white;
+                padding: 5px;
+            }
+        """)
+        super().accept()
+
 
     def get_task_data(self):
         """Возвращает данные задачи."""
