@@ -2,11 +2,13 @@ from PySide6.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QWidget
 from PySide6.QtGui import QIcon
 
 from ui.topbar import TopBar
-from ui.about_dialog_ui import AboutDialogUI
+from ui.news_chat_dialog_ui import NewsChatDialogUI
 from ui.account_dialog_ui import AccountDialogUI
 from ui.task_manager_ui import TaskManagerUI
 from ui.footer import Footer
-from ui.chat_ui import ChatButtonUI, ChatDialogUI
+from ui.settings import SettingsButtonUI, SettingsDialogUI
+from ui.notification_ui import NotificationButtonUI, NotificationDialogUI
+from ui.habits_tracker_ui import HabitsButtonUI, HabitsDialogUI
 
 
 class MainWindow(QMainWindow):
@@ -68,17 +70,27 @@ class MainWindow(QMainWindow):
         # Устанавливаем основной виджет в качестве центрального виджета
         self.setCentralWidget(main_layout_widget)
 
+        # Добавляем кнопку трекера привычек в правый нижний угол (над кнопкой настроек)
+        self.habits_button = HabitsButtonUI(self)
+        self.habits_button.clicked.connect(self.show_habits_button)
+        self.update_habits_button_position()
+
+        # Добавляем кнопку нотификации в правый нижний угол (слева от настроек)
+        self.notification_button = NotificationButtonUI(self)
+        self.notification_button.clicked.connect(self.show_notification_button)
+        self.update_notification_button_position()
+
         # Добавляем кнопку чата в правый нижний угол
-        self.chat_button = ChatButtonUI(self)
-        self.chat_button.clicked.connect(self.show_chat_dialog)
-        self.update_chat_button_position()  # Устанавливаем начальную позицию кнопки
+        self.settings_button = SettingsButtonUI(self)
+        self.settings_button.clicked.connect(self.show_settings_dialog)
+        self.update_settings_button_position()
 
         # Подключаем обработчик изменения размеров окна
         self.resizeEvent = self.on_resize
 
 
     def show_about_dialog(self):
-        about_dialog = AboutDialogUI(self)
+        about_dialog = NewsChatDialogUI(self)
         about_dialog.exec()
     
 
@@ -87,32 +99,72 @@ class MainWindow(QMainWindow):
         account_dialog.exec()
 
     
-    def show_chat_dialog(self):
-        chat_dialog = ChatDialogUI(self)
-        chat_dialog.exec()
+    def show_settings_dialog(self):
+        settings_dialog = SettingsDialogUI(self)
+        settings_dialog.exec()
+    
+
+    def show_notification_button(self):
+        notification_dialog = NotificationDialogUI(self)
+        notification_dialog.exec()
+    
+
+    def show_habits_button(self):
+        notification_dialog = HabitsDialogUI(self)
+        notification_dialog.exec()
 
 
-    def update_chat_button_position(self):
-        """
-        Обновляет позицию кнопки чата в правом нижнем углу окна.
-        """
+    def update_settings_button_position(self):
+        """Обновляет позицию кнопки чата в правом нижнем углу окна."""
         # Получаем размеры окна
         window_width = self.width()
         window_height = self.height()
 
         # Вычисляем позицию кнопки
-        button_width = self.chat_button.width()
-        button_height = self.chat_button.height()
-        x = window_width - button_width - 20  # Отступ справа
-        y = window_height - button_height - 35  # Отступ снизу
+        button_width = self.settings_button.width()
+        button_height = self.settings_button.height()
+        x = window_width - button_width - 20
+        y = window_height - button_height - 35
 
         # Устанавливаем позицию кнопки
-        self.chat_button.move(x, y)
+        self.settings_button.move(x, y)
+    
+
+    def update_notification_button_position(self):
+        """Обновляет позицию кнопки нотификаций в правом нижнем углу окна."""
+        # Получаем размеры окна
+        window_width = self.width()
+        window_height = self.height()
+
+        # Вычисляем позицию кнопки
+        button_width = self.notification_button.width()
+        button_height = self.notification_button.height()
+        x = window_width - button_width - 80
+        y = window_height - button_height - 35
+
+        # Устанавливаем пощицию кнопки
+        self.notification_button.move(x, y)
+    
+
+    def update_habits_button_position(self):
+        """Обновляет позицию кнопки нотификаций в правом нижнем углу окна."""
+        # Получаем размеры окна
+        window_width = self.width()
+        window_height = self.height()
+
+        # Вычисляем позицию кнопки
+        button_width = self.habits_button.width()
+        button_height = self.habits_button.height()
+        x = window_width - button_width - 20
+        y = window_height - button_height - 100
+
+        # Устанавливаем пощицию кнопки
+        self.habits_button.move(x, y)
 
 
     def on_resize(self, event):
-        """
-        Обрабатывает событие изменения размеров окна.
-        """
-        self.update_chat_button_position()
+        """Обрабатывает событие изменения размеров окна."""
+        self.update_settings_button_position()
+        self.update_notification_button_position()
+        self.update_habits_button_position()
         super().resizeEvent(event)

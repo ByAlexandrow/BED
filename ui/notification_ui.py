@@ -3,12 +3,12 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon, QFont
 
 
-class ChatButtonUI(QPushButton):
+class NotificationButtonUI(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedSize(50, 50)
-        self.setIcon(QIcon("resources/icons/chat.png")) 
-        self.setIconSize(QSize(50, 50))
+        self.setIcon(QIcon("resources/icons/notification.png")) 
+        self.setIconSize(QSize(40, 40))
         self.setStyleSheet("""
             QPushButton {
                 background-color: rgba(0, 0, 0, 0.1);
@@ -20,10 +20,10 @@ class ChatButtonUI(QPushButton):
         """)
 
 
-class ChatDialogUI(QDialog):
+class NotificationDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("BED - Chat")
+        self.setWindowTitle("BED - Work Rest Balance")
         self.setFixedSize(1100, 625)
 
         layout = QVBoxLayout()

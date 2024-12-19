@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout
-from PySide6.QtGui import QFont, QIcon
+from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize
 
 
@@ -13,7 +13,16 @@ class AccountDialogUI(QDialog):
         layout = QVBoxLayout()
 
         # Добавляем растягивающийся элемент сверху, чтобы поднять текст выше
-        layout.addStretch(2)  # Увеличиваем вес растягивающегося элемента
+        layout.addStretch(1.65)  # Увеличиваем вес растягивающегося элемента
+
+        # Иконка
+        self.security_icon = QLabel()
+        self.security_icon.setPixmap(QPixmap("resources/icons/security.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.security_icon.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.security_icon)
+
+        # Отступ между иконкой и текстом
+        layout.addSpacing(20)
 
         # Текст "Рекомендуем заполнить все поля и установить пароль"
         self.info_label = QLabel("Рекомендуем заполнить все поля и установить пароль\nЭто необходимо для безопасности ваших данных\nВы можете изменить их в любой момент\nПри входе в приложение потребуется ввести пароль, никнейм и код")
@@ -38,7 +47,7 @@ class AccountDialogUI(QDialog):
         self.password_label.setFont(font)
         self.password_label.setAlignment(Qt.AlignCenter)
         self.password_input = QLineEdit()
-        self.password_input.setPlaceholderText("Количество символов <20")
+        self.password_input.setPlaceholderText("Количество символов <= 20")
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setFixedSize(300, 35)
         self.password_input.setStyleSheet("""
@@ -58,7 +67,7 @@ class AccountDialogUI(QDialog):
         self.nickname_label.setFont(font)
         self.nickname_label.setAlignment(Qt.AlignCenter)
         self.nickname_input = QLineEdit()
-        self.nickname_input.setPlaceholderText("Количество символов <10")
+        self.nickname_input.setPlaceholderText("Количество символов <= 10")
         self.nickname_input.setFixedSize(300, 35)
         self.nickname_input.setStyleSheet("""
             QLineEdit {
@@ -77,7 +86,7 @@ class AccountDialogUI(QDialog):
         self.code_label.setFont(font)
         self.code_label.setAlignment(Qt.AlignCenter)
         self.code_input = QLineEdit()
-        self.code_input.setPlaceholderText("Количество символов <5")
+        self.code_input.setPlaceholderText("Количество символов <= 5")
         self.code_input.setFixedSize(300, 35)
         self.code_input.setStyleSheet("""
             QLineEdit {

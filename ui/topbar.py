@@ -36,7 +36,7 @@ class TopBar(QWidget):
 
         self.about_button = QPushButton()
         self.about_button.setFixedSize(90, 50)
-        self.about_button.setIcon(QIcon("resources/icons/about.png"))
+        self.about_button.setIcon(QIcon("resources/icons/news_chat.png"))
         self.about_button.setIconSize(QSize(40, 40))
         self.about_button.setStyleSheet("""
             QPushButton {

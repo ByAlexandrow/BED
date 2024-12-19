@@ -1,11 +1,9 @@
-import random
-
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QApplication
-from PySide6.QtGui import QFont, QCursor
-from PySide6.QtCore import Qt, QTimer, QRect
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Qt
 
 
-class AboutDialogUI(QDialog):
+class NewsChatDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("BED - About")
