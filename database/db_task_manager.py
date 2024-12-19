@@ -36,11 +36,11 @@ def load_tasks_from_task_db():
     return tasks
 
 
-def update_task_in_task_db(old_name, new_name, new_description):
+def update_task_in_task_db(old_name, new_name, old_description, new_description):
     """Обновляет задачу в базе данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
-    cursor.execute('UPDATE tasks SET name = ?, description = ? WHERE name = ?', (new_name, new_description, old_name))
+    cursor.execute('UPDATE tasks SET name = ?, description = ? WHERE name = ? AND description = ?', (new_name, new_description, old_name, old_description))
     conn.commit()
     conn.close()
 
@@ -50,14 +50,5 @@ def delete_task_from_task_db(task_name):
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
     cursor.execute('DELETE FROM tasks WHERE name = ?', (task_name,))
-    conn.commit()
-    conn.close()
-
-
-def mark_task_completed(task_name, completed):
-    """Отмечает задачу как выполненную или невыполненную."""
-    conn = sqlite3.connect('tasks.db')
-    cursor = conn.cursor()
-    cursor.execute('UPDATE tasks SET completed = ? WHERE name = ?', (completed, task_name))
     conn.commit()
     conn.close()

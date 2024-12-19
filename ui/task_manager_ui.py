@@ -1,12 +1,12 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QPushButton, QHBoxLayout, QLabel, QCheckBox, QLineEdit
+    QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QPushButton, QHBoxLayout, QLabel, QCheckBox, QTextEdit, QLineEdit
 )
 from PySide6.QtCore import QTimer, QTime, QSize, Qt
 from PySide6.QtGui import QIcon
 
 from database.db_task_manager import (
     create_task_db, add_task_to_task_db, load_tasks_from_task_db,
-    update_task_in_task_db, delete_task_from_task_db, mark_task_completed
+    update_task_in_task_db, delete_task_from_task_db
 )
 
 from ui.add_task_dialog_ui import AddTaskDialog
@@ -135,12 +135,18 @@ class TaskManagerUI(QWidget):
         # Текст задачи
         task_label = QLineEdit(task_text)
         task_label.setReadOnly(True)
+        task_label.setFixedHeight(30)
         task_layout.addWidget(task_label)
+
+        # Поле для описания задачи
+        task_description_edit = QTextEdit(task_description)
+        task_description_edit.setVisible(False)
+        task_layout.addWidget(task_description_edit)
 
         # Кнопка "Редактировать"
         edit_button = QPushButton("✏️")
         edit_button.setFixedSize(QSize(30, 30))
-        edit_button.clicked.connect(lambda: self.edit_task(task_label, task_description))
+        edit_button.clicked.connect(lambda: self.edit_task(task_label, task_description_edit))
         task_layout.addWidget(edit_button)
 
         # Кнопка "Удалить"
@@ -155,19 +161,24 @@ class TaskManagerUI(QWidget):
         self.task_list.setItemWidget(item, task_widget)
 
 
-    def edit_task(self, task_label, task_description):
+    def edit_task(self, task_label, task_description_edit):
         """Открывает диалоговое окно для редактирования задачи."""
         dialog = AddTaskDialog(self)
         dialog.task_name_edit.setText(task_label.text())
-        dialog.task_description_edit.setText(task_description)
+        dialog.task_description_edit.setText(task_description_edit.toPlainText())  # Устанавливаем текущее описание
 
         if dialog.exec() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
             old_name = task_label.text()
             new_name = task_data["name"]
             new_description = task_data["description"]
+        
+            # Обновляем задачу в базе данных
+            update_task_in_task_db(old_name, new_name, task_description_edit.toPlainText(), new_description)
+        
+            # Обновляем интерфейс сразу
             task_label.setText(new_name)
-            update_task_in_task_db(old_name, new_name, new_description)  # Обновляем задачу в базе данных
+            task_description_edit.setText(new_description)  # Обновляем содержимое QTextEdit
 
 
     def delete_task(self, task_name, item):
@@ -181,11 +192,6 @@ class TaskManagerUI(QWidget):
 
         # Обновляем интерфейс, если задач не осталось
         self.update_empty_label()
-
-
-    def mark_task_completed(self, task_name, completed):
-        """Отмечает задачу как выполненную или невыполненную."""
-        mark_task_completed(task_name, completed)
 
 
     def load_tasks(self):
