@@ -1,4 +1,8 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QLabel, QHBoxLayout, QButtonGroup, QMessageBox
+import sqlite3
+
+from PySide6.QtWidgets import (
+    QDialog, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QLabel, QHBoxLayout, QButtonGroup
+)
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon, QFont
 
@@ -8,7 +12,7 @@ class AddTaskDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("BED - New Task")
-        self.setFixedSize(425, 425)
+        self.setFixedSize(325, 450)
 
         # Основной макет
         layout = QVBoxLayout(self)
@@ -34,6 +38,15 @@ class AddTaskDialog(QDialog):
         """)
         task_name_layout.addWidget(self.task_name_label)
         task_name_layout.addWidget(self.task_name_edit)
+
+        # Метка для сообщения об ошибке
+        self.error_label = QLabel("")
+        self.error_label.setStyleSheet("color: red;")
+        self.error_label.setFont(QFont("Arial", 10))
+        self.error_label.setAlignment(Qt.AlignCenter)
+        self.error_label.setVisible(False)
+        task_name_layout.addWidget(self.error_label)
+
         layout.addLayout(task_name_layout)
 
         # Поле для ввода описания задачи
@@ -142,24 +155,43 @@ class AddTaskDialog(QDialog):
     def set_level(self, level):
         """Устанавливает выбранный уровень сложности."""
         self.selected_level = level
-    
+
 
     def accept(self):
-        """Проверяет, что поле "Название" заполнено перед закрытием диалога."""
-        if not self.task_name_edit.text().strip():
-            # Подсвечиваем поле "Название" красным цветом, если оно пустое
+        """Проверяет, что поле "Название" заполнено и уникально перед закрытием диалога."""
+        task_name = self.task_name_edit.text().strip()
+
+        # Проверка на пустое поле
+        if not task_name:
             self.task_name_edit.setStyleSheet("""
                 QLineEdit {
-                    background-color: rgba(255, 0, 0, 0.4);
-                    border: 1px solid #ff0000;
+                    background-color: rgba(0, 0, 0, 0.4);
+                    border: 1px solid rgba(255, 0, 0, 0.4);
                     border-radius: 15px;
                     color: white;
                     padding: 5px;
                 }
             """)
-            return  # Прерываем выполнение, если поле пустое
+            self.error_label.setText("Поле не может быть пустым")
+            self.error_label.setVisible(True)
+            return
 
-        # Если поле заполнено, сбрасываем стиль и продолжаем с закрытием диалога
+        # Проверка на уникальность имени в базе данных
+        if not self.is_name_unique(task_name):
+            self.task_name_edit.setStyleSheet("""
+                QLineEdit {
+                    background-color: rgba(0, 0, 0, 0.4);
+                    border: 1px solid rgba(255, 0, 0, 0.4);
+                    border-radius: 15px;
+                    color: white;
+                    padding: 5px;
+                }
+            """)
+            self.error_label.setText("Такое имя уже существует")
+            self.error_label.setVisible(True)
+            return
+
+        # Если все проверки пройдены, сбрасываем стиль и продолжаем с закрытием диалога
         self.task_name_edit.setStyleSheet("""
             QLineEdit {
                 background-color: rgba(0, 0, 0, 0.4);
@@ -169,7 +201,21 @@ class AddTaskDialog(QDialog):
                 padding: 5px;
             }
         """)
+        self.error_label.setVisible(False)
         super().accept()
+
+
+    def is_name_unique(self, task_name):
+        """
+        Проверяет, уникально ли имя задачи в базе данных.
+        Возвращает True, если имя уникально, и False, если имя уже существует.
+        """
+        connection = sqlite3.connect("tasks.db")
+        cursor = connection.cursor()
+        cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ?", (task_name,))
+        count = cursor.fetchone()[0]
+        connection.close()
+        return count == 0
 
 
     def get_task_data(self):
