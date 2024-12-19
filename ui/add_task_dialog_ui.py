@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QLabel, QHBoxLayout, QButtonGroup
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QLabel, QHBoxLayout, QButtonGroup, QMessageBox
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon, QFont
 
@@ -21,6 +21,8 @@ class AddTaskDialog(QDialog):
         self.task_name_label = QLabel("Название")
         self.task_name_label.setFont(label_font)
         self.task_name_edit = QLineEdit(self)
+        self.task_name_edit.setMaxLength(20)
+        self.task_name_edit.setPlaceholderText("Количество символов <= 20")
         self.task_name_edit.setStyleSheet("""
             QLineEdit {
                 background-color: rgba(0, 0, 0, 0.4);
@@ -39,6 +41,7 @@ class AddTaskDialog(QDialog):
         self.task_description_label = QLabel("Описание")
         self.task_description_label.setFont(label_font)
         self.task_description_edit = QTextEdit(self)
+        self.task_description_edit.setPlaceholderText("Количество символов: бесконечность не предел")
         self.task_description_edit.setStyleSheet("""
             QTextEdit {
                 background-color: rgba(0, 0, 0, 0.4);
