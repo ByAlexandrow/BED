@@ -161,18 +161,14 @@ class AccountDialogUI(QDialog):
         self.setLayout(layout)
 
     def save_data(self):
-        """
-        Обработчик для кнопки "Сохранить".
-        """
+        """Обработчик для кнопки "Сохранить"."""
         password = self.password_input.text()
         nickname = self.nickname_input.text()
         code = self.code_input.text()
         print(f"Сохраненные данные: Пароль={password}, Никнейм={nickname}, Код={code}")
 
     def change_data(self):
-        """
-        Обработчик для кнопки "Изменить".
-        """
+        """Обработчик для кнопки "Изменить"."""
         self.password_input.clear()
         self.nickname_input.clear()
         self.code_input.clear()
