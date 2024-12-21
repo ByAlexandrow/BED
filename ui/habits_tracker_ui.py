@@ -45,7 +45,7 @@ class HabitsDialogUI(QDialog):
 
         # Макет для квадратных виджетов внутри QScrollArea
         self.grid_layout = QGridLayout(self.scroll_content)
-        self.grid_layout.setSpacing(10)  # Отступы между квадратами
+        self.grid_layout.setSpacing(10)
 
         # Добавляем QScrollArea в основной макет
         self.layout.addWidget(self.scroll_area)
@@ -117,7 +117,7 @@ class HabitsDialogUI(QDialog):
 
         # Кнопки "Редактировать", "Сохранить" и "Удалить"
         buttons_layout = QHBoxLayout()
-        square_layout.addLayout(buttons_layout, 11, 0, 1, 7)
+        square_layout.addLayout(buttons_layout, 12, 0, 1, 7)
 
         # Кнопка "Редактировать"
         edit_habit = QPushButton("✏️")
@@ -157,17 +157,24 @@ class HabitsDialogUI(QDialog):
         """Добавляет чекпоинты для каждого дня текущего месяца."""
         today = datetime.today()
         month_start = datetime(today.year, today.month, 1)
-        month_end = datetime(today.year, today.month, 28) + timedelta(days=4)  # Берем 28 дней и добавляем 4, чтобы получить конец месяца
-        month_end = month_end - timedelta(days=month_end.day)  # Убираем лишние дни
+        month_end = datetime(today.year, today.month, 28) + timedelta(days=4)
+        month_end = month_end - timedelta(days=month_end.day)
 
         current_date = month_start
-        row = 1  # Начинаем со второй строки (после поля ввода)
+        row = 2  # Начинаем со второй строки (после поля ввода)
         col = 0
 
         while current_date <= month_end:
             # Создаем чекпоинт
             checkbox = QCheckBox()
-            checkbox.setStyleSheet("border: none;")
+            checkbox.setStyleSheet("""
+                QCheckBox {
+                    spacing: 0px;
+                    margin: 5.5px;
+                    padding: 0;
+                    border: none;
+                }
+            """)
 
             # Создаем QLabel для отображения числа дня
             day_label = QLabel(current_date.strftime("%d"))
