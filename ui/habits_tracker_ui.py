@@ -8,6 +8,12 @@ from PySide6.QtGui import QIcon
 
 from datetime import datetime, timedelta
 
+from database.db_habits_manager import (
+    create_habits_db, add_new_habit, add_habits_checkpoint,
+    get_all_habits, get_all_habits_checkpoints, update_checkpoint,
+    delete_habit_from_db 
+)
+
 
 class HabitsButtonUI(QPushButton):
     def __init__(self, parent=None):
@@ -150,7 +156,7 @@ class HabitsDialogUI(QDialog):
 
         # Если квадратов больше 3 в строке, добавляем новую строку
         if self.square_counter % 3 == 0:
-            self.grid_layout.setRowStretch(row, 1)  # Растягиваем новую строку
+            self.grid_layout.setRowStretch(row, 1)
 
 
     def add_checkpoints(self, layout):
@@ -200,19 +206,19 @@ class HabitsDialogUI(QDialog):
 
 
     def edit_habit(self, habit_label, save_button):
-        """Метод для редактирования задачи."""
+        """Метод для редактирования карточки привычки."""
         habit_label.setReadOnly(False)
         habit_label.setFocus()
         save_button.setEnabled(True)
 
 
     def save_habit(self, habit_label):
-        """Метод для сохранения данных карточки."""
+        """Метод для сохранения данных карточки привычки."""
         habit_label.setReadOnly(True)
 
 
     def delete_habit(self, square_widget):
-        """Метод для удаления задачи."""
+        """Метод для удаления карточки привычки."""
         self.grid_layout.removeWidget(square_widget)
         square_widget.deleteLater()
         self.square_counter -= 1

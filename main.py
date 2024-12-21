@@ -2,8 +2,8 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from database.db_task_manager import create_tasks_db
-from database.db_habit_manager import create_habits_db
+from database.db_tasks_manager import create_tasks_db
+from database.db_habits_manager import create_habits_db
 from database.db_settings_manager import create_settings_db
 
 from ui.main_window_ui import MainWindow

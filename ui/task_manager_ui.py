@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QTimer, QTime, QSize, Qt
 from PySide6.QtGui import QIcon
 
-from database.db_task_manager import (
+from database.db_tasks_manager import (
     create_tasks_db, add_tasks_to_tasks_db, load_tasks_from_tasks_db,
     update_tasks_in_tasks_db, delete_tasks_from_tasks_db
 )
