@@ -1,6 +1,12 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QGridLayout, QScrollArea, QLineEdit, QInputDialog
-from PySide6.QtCore import QSize
+from PySide6.QtWidgets import (
+    QPushButton, QDialog, QVBoxLayout, QHBoxLayout,
+    QWidget, QFrame, QGridLayout, QScrollArea,
+    QLineEdit, QCheckBox, QLabel
+)
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon
+
+from datetime import datetime, timedelta
 
 
 class HabitsButtonUI(QPushButton):
@@ -85,23 +91,33 @@ class HabitsDialogUI(QDialog):
         """Добавляет квадратный виджет в макет."""
         # Создаем квадратный виджет
         square_widget = QFrame()
-        square_widget.setFixedSize(250, 300)  # Размер квадрата
+        square_widget.setFixedSize(250, 400)  # Размер квадрата
         square_widget.setStyleSheet("background-color: rgba(255, 255, 255, 0); border-radius: 15px; border: 1px solid white; color: white;")
 
-        # Внутренний макет для квадрата
-        square_layout = QVBoxLayout()
+        # Внутренний макет для квадрата (используем QGridLayout для чекпоинтов)
+        square_layout = QGridLayout()
         square_widget.setLayout(square_layout)
 
         # Поле ввода названия привычки
         habit_label = QLineEdit()
         habit_label.setPlaceholderText("Название привычки")
         habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; color: white; padding: 5px;")
-        habit_label.setReadOnly(True)  # Поле изначально недоступно для редактирования
-        square_layout.addWidget(habit_label)
+        habit_label.setReadOnly(True)
+        square_layout.addWidget(habit_label, 0, 0, 1, 7)
+
+        # Поле текущего месяца
+        current_month_label = datetime.today()
+        month_name_label = QLabel(current_month_label.strftime('%B %Y'))
+        month_name_label.setStyleSheet("color: white; border: none;")
+        month_name_label.setAlignment(Qt.AlignCenter)
+        square_layout.addWidget(month_name_label, 1, 0, 1, 7)
+
+        # Добавляем чекпоинты для каждого дня текущего месяца
+        self.add_checkpoints(square_layout)
 
         # Кнопки "Редактировать", "Сохранить" и "Удалить"
         buttons_layout = QHBoxLayout()
-        square_layout.addLayout(buttons_layout)
+        square_layout.addLayout(buttons_layout, 11, 0, 1, 7)
 
         # Кнопка "Редактировать"
         edit_habit = QPushButton("✏️")
@@ -137,16 +153,55 @@ class HabitsDialogUI(QDialog):
             self.grid_layout.setRowStretch(row, 1)  # Растягиваем новую строку
 
 
+    def add_checkpoints(self, layout):
+        """Добавляет чекпоинты для каждого дня текущего месяца."""
+        today = datetime.today()
+        month_start = datetime(today.year, today.month, 1)
+        month_end = datetime(today.year, today.month, 28) + timedelta(days=4)  # Берем 28 дней и добавляем 4, чтобы получить конец месяца
+        month_end = month_end - timedelta(days=month_end.day)  # Убираем лишние дни
+
+        current_date = month_start
+        row = 1  # Начинаем со второй строки (после поля ввода)
+        col = 0
+
+        while current_date <= month_end:
+            # Создаем чекпоинт
+            checkbox = QCheckBox()
+            checkbox.setStyleSheet("border: none;")
+
+            # Создаем QLabel для отображения числа дня
+            day_label = QLabel(current_date.strftime("%d"))
+            day_label.setStyleSheet("color: white; font-size: 12px; border: none;")
+            day_label.setAlignment(Qt.AlignCenter)
+
+            # Ограничиваем установку чекпоинтов только на текущий день
+            if current_date.date() == today.date():
+                checkbox.setEnabled(True)
+            else:
+                checkbox.setEnabled(False)
+
+            # Добавляем чекпоинт и QLabel в макет
+            layout.addWidget(checkbox, row, col)
+            layout.addWidget(day_label, row + 1, col)
+
+            col += 1
+            if col == 7:
+                col = 0
+                row += 2
+
+            current_date += timedelta(days=1)
+
+
     def edit_habit(self, habit_label, save_button):
         """Метод для редактирования задачи."""
-        habit_label.setReadOnly(False)  # Делаем поле доступным для редактирования
-        habit_label.setFocus()  # Устанавливаем фокус на поле ввода
-        save_button.setEnabled(True)  # Активируем кнопку "Сохранить"
+        habit_label.setReadOnly(False)
+        habit_label.setFocus()
+        save_button.setEnabled(True)
 
 
     def save_habit(self, habit_label):
         """Метод для сохранения данных карточки."""
-        habit_label.setReadOnly(True)  # Делаем поле недоступным для редактирования
+        habit_label.setReadOnly(True)
 
 
     def delete_habit(self, square_widget):
