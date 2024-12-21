@@ -2,7 +2,7 @@ import sqlite3
 
 
 def create_settings_db():
-    conn = sqlite3.connect("settings.db")
+    conn = sqlite3.connect("db_settings.db")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS settings (
@@ -15,7 +15,7 @@ def create_settings_db():
 
 
 def save_selected_time(time):
-    conn = sqlite3.connect("settings.db")
+    conn = sqlite3.connect("db_settings.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM settings")
     if cursor.fetchone():
@@ -27,7 +27,7 @@ def save_selected_time(time):
 
 
 def load_selected_time():
-    conn = sqlite3.connect("settings.db")
+    conn = sqlite3.connect("db_settings.db")
     cursor = conn.cursor()
     cursor.execute("SELECT selected_time FROM settings")
     result = cursor.fetchone()
