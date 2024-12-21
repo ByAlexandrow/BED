@@ -9,8 +9,8 @@ from PySide6.QtGui import QIcon
 from datetime import datetime, timedelta
 
 from database.db_habits_manager import (
-    create_habits_db, add_new_habit,
-    get_all_habits, get_all_habits_checkpoints, update_checkpoint,
+    create_habits_db, add_new_habit, get_all_habits,
+    get_all_habits_checkpoints, update_checkpoint,
     delete_habit_from_db
 )
 
@@ -98,6 +98,7 @@ class HabitsDialogUI(QDialog):
         # Загружаем привычки из базы данных
         self.load_habits()
 
+
     def add_square_widget(self):
         """Добавляет квадратный виджет в макет."""
         # Создаем квадратный виджет
@@ -159,6 +160,7 @@ class HabitsDialogUI(QDialog):
         # Возвращаем созданный виджет
         return square_widget
 
+
     def add_checkpoints(self, layout):
         """Добавляет чекпоинты для каждого дня текущего месяца."""
         today = datetime.today()
@@ -210,10 +212,12 @@ class HabitsDialogUI(QDialog):
 
         return checkboxes
 
+
     def edit_habit(self, habit_label):
         """Метод для редактирования карточки привычки."""
         habit_label.setReadOnly(False)
         habit_label.setFocus()
+
 
     def delete_habit(self, square_widget):
         """Метод для удаления карточки привычки."""
@@ -227,6 +231,7 @@ class HabitsDialogUI(QDialog):
         self.grid_layout.removeWidget(square_widget)
         square_widget.deleteLater()
         self.square_counter -= 1
+
 
     def load_habits(self):
         """Загружает привычки из базы данных."""
@@ -254,10 +259,12 @@ class HabitsDialogUI(QDialog):
                 if day <= len(checkboxes):  # Проверяем, что день существует
                     checkboxes[day - 1].setChecked(checked == 1)
 
+
     def closeEvent(self, event):
         """Сохраняет данные в базу данных при закрытии окна."""
         self.save_habits()
         event.accept()
+
 
     def save_habits(self):
         """Обновляет состояние всех привычек и их чекпоинтов в базе данных."""
