@@ -5,8 +5,8 @@ from PySide6.QtCore import QTimer, QTime, QSize, Qt
 from PySide6.QtGui import QIcon
 
 from database.db_task_manager import (
-    create_task_db, add_task_to_task_db, load_tasks_from_task_db,
-    update_task_in_task_db, delete_task_from_task_db
+    create_tasks_db, add_tasks_to_tasks_db, load_tasks_from_tasks_db,
+    update_tasks_in_tasks_db, delete_tasks_from_tasks_db
 )
 
 from ui.add_task_dialog_ui import AddTaskDialog
@@ -17,7 +17,7 @@ class TaskManagerUI(QWidget):
         super().__init__()
 
         # Создаём базу данных, если её нет
-        create_task_db()
+        create_tasks_db()
 
         # Основной макет
         self.layout = QVBoxLayout(self)
@@ -97,7 +97,7 @@ class TaskManagerUI(QWidget):
         if dialog.exec() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
             self.add_task_item(task_data["name"], task_data["description"])
-            add_task_to_task_db(task_data["name"], task_data["description"])  # Добавляем задачу в базу данных
+            add_tasks_to_tasks_db(task_data["name"], task_data["description"])  # Добавляем задачу в базу данных
 
 
     def update_time(self):
@@ -173,7 +173,7 @@ class TaskManagerUI(QWidget):
             new_description = task_data["description"]
         
             # Обновляем задачу в базе данных
-            update_task_in_task_db(old_name, new_name, task_description_edit.toPlainText(), new_description)
+            update_tasks_in_tasks_db(old_name, new_name, task_description_edit.toPlainText(), new_description)
         
             # Обновляем интерфейс сразу
             task_label.setText(new_name)
@@ -187,7 +187,7 @@ class TaskManagerUI(QWidget):
         self.task_list.takeItem(row)
 
         # Удаляем задачу из базы данных
-        delete_task_from_task_db(task_name)
+        delete_tasks_from_tasks_db(task_name)
 
         # Обновляем интерфейс, если задач не осталось
         self.update_empty_label()
@@ -195,7 +195,7 @@ class TaskManagerUI(QWidget):
 
     def load_tasks(self):
         """Загружает задачи из базы данных."""
-        tasks = load_tasks_from_task_db()
+        tasks = load_tasks_from_tasks_db()
         for name, description in tasks:
             self.add_task_item(name, description)
 

@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def create_task_db():
+def create_tasks_db():
     """Создаёт базу данных и таблицу для задач."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
@@ -16,7 +16,7 @@ def create_task_db():
     conn.close()
 
 
-def add_task_to_task_db(name, description):
+def add_tasks_to_tasks_db(name, description):
     """Добавляет задачу в базу данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
@@ -25,7 +25,7 @@ def add_task_to_task_db(name, description):
     conn.close()
 
 
-def load_tasks_from_task_db():
+def load_tasks_from_tasks_db():
     """Загружает задачи из базы данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
@@ -35,7 +35,7 @@ def load_tasks_from_task_db():
     return tasks
 
 
-def update_task_in_task_db(old_name, new_name, old_description, new_description):
+def update_tasks_in_tasks_db(old_name, new_name, old_description, new_description):
     """Обновляет задачу в базе данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()
@@ -44,7 +44,7 @@ def update_task_in_task_db(old_name, new_name, old_description, new_description)
     conn.close()
 
 
-def delete_task_from_task_db(task_name):
+def delete_tasks_from_tasks_db(task_name):
     """Удаляет задачу из базы данных."""
     conn = sqlite3.connect('tasks.db')
     cursor = conn.cursor()

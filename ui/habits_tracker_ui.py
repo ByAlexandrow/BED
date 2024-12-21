@@ -136,15 +136,18 @@ class HabitsDialogUI(QDialog):
         if self.square_counter % 3 == 0:
             self.grid_layout.setRowStretch(row, 1)  # Растягиваем новую строку
 
+
     def edit_habit(self, habit_label, save_button):
         """Метод для редактирования задачи."""
         habit_label.setReadOnly(False)  # Делаем поле доступным для редактирования
         habit_label.setFocus()  # Устанавливаем фокус на поле ввода
         save_button.setEnabled(True)  # Активируем кнопку "Сохранить"
 
+
     def save_habit(self, habit_label):
         """Метод для сохранения данных карточки."""
         habit_label.setReadOnly(True)  # Делаем поле недоступным для редактирования
+
 
     def delete_habit(self, square_widget):
         """Метод для удаления задачи."""
