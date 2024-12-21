@@ -112,9 +112,9 @@ class HabitsDialogUI(QDialog):
 
         # Поле ввода названия привычки
         habit_label = QLineEdit()
-        habit_label.setPlaceholderText("Название привычки")
+        habit_label.setPlaceholderText("Название привычки (нельзя изменить)")
         habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; color: white; padding: 5px;")
-        habit_label.setReadOnly(True)
+        habit_label.setReadOnly(False)
         square_layout.addWidget(habit_label, 0, 0, 1, 7)
 
         # Поле текущего месяца
@@ -130,12 +130,6 @@ class HabitsDialogUI(QDialog):
         # Кнопки "Редактировать" и "Удалить"
         buttons_layout = QHBoxLayout()
         square_layout.addLayout(buttons_layout, 12, 0, 1, 7)
-
-        # Кнопка "Редактировать"
-        edit_habit = QPushButton("✏️")
-        edit_habit.setFixedSize(QSize(30, 30))
-        edit_habit.clicked.connect(lambda: self.edit_habit(habit_label))
-        buttons_layout.addWidget(edit_habit)
 
         # Кнопка "Удалить"
         delete_habit = QPushButton("❌")
@@ -213,12 +207,6 @@ class HabitsDialogUI(QDialog):
         return checkboxes
 
 
-    def edit_habit(self, habit_label):
-        """Метод для редактирования карточки привычки."""
-        habit_label.setReadOnly(False)
-        habit_label.setFocus()
-
-
     def delete_habit(self, square_widget):
         """Метод для удаления карточки привычки."""
         # Удаляем привычку из базы данных
@@ -246,7 +234,8 @@ class HabitsDialogUI(QDialog):
 
             # Находим поле ввода названия привычки
             habit_label = square_widget.findChild(QLineEdit)
-            habit_label.setText(habit_name)  # Устанавливаем название привычки
+            habit_label.setText(habit_name)
+            habit_label.setReadOnly(True)
 
             # Получаем чекпоинты для текущего месяца и года
             checkpoints = get_all_habits_checkpoints(habit_id, today.year, today.month)
@@ -286,3 +275,5 @@ class HabitsDialogUI(QDialog):
                 today = datetime.today()
                 for day, checkbox in enumerate(checkboxes, start=1):
                     update_checkpoint(habit_id, today.year, today.month, day, int(checkbox.isChecked()))
+                
+                habit_label.setReadOnly(True)
