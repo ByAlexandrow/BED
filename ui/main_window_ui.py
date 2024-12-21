@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
 
     def show_about_dialog(self):
         about_dialog = NewsChatDialogUI(self)
-        about_dialog.exec()
+        about_dialog.show()
     
 
     def show_account_dialog(self):
@@ -101,7 +101,7 @@ class MainWindow(QMainWindow):
     
     def show_settings_dialog(self):
         settings_dialog = SettingsDialogUI(self)
-        settings_dialog.exec()
+        settings_dialog.show()
     
 
     def show_notification_button(self):
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
 
     def show_habits_button(self):
         notification_dialog = HabitsDialogUI(self)
-        notification_dialog.exec()
+        notification_dialog.show()
 
 
     def update_settings_button_position(self):

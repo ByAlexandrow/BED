@@ -85,7 +85,7 @@ class TaskManagerUI(QWidget):
         # Таймер для обновления времени
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_time)
-        self.timer.start(1000)  # Обновление каждую секунду
+        self.timer.start(1000)
 
         # Подключаем сигнал изменения списка задач
         self.task_list.itemChanged.connect(self.update_empty_label)
@@ -96,8 +96,8 @@ class TaskManagerUI(QWidget):
         dialog = AddTaskDialog(self)
         if dialog.exec() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
-            self.add_task_item(task_data["name"], task_data["description"])
-            add_tasks_to_tasks_db(task_data["name"], task_data["description"])  # Добавляем задачу в базу данных
+            self.add_task_item(task_data["name"], task_data["description"], task_data["level"])
+            add_tasks_to_tasks_db(task_data["name"], task_data["description"], task_data["level"])  # Добавляем задачу в базу данных
 
 
     def update_time(self):
@@ -109,15 +109,15 @@ class TaskManagerUI(QWidget):
     def update_empty_label(self):
         """Скрывает или показывает текст, если задач нет."""
         if self.task_list.count() == 1 and self.task_list.item(0) == self.empty_item:
-            self.empty_item.setText("\nДобавьте задачи!")  # Текст, если задач нет
+            self.empty_item.setText("\nДобавьте задачи!")
         elif self.task_list.count() == 0:
             self.task_list.addItem(self.empty_item)
-            self.empty_item.setText("\nДобавьте задачи!")  # Текст, если задач нет
+            self.empty_item.setText("\nДобавьте задачи!")
         else:
-            self.empty_item.setText("\nУспейте выполнить все задачи!")  # Текст, если задачи есть
+            self.empty_item.setText("\nУспейте выполнить все задачи!")
 
 
-    def add_task_item(self, task_text, task_description):
+    def add_task_item(self, task_text, task_description, task_level):
         """Добавляет задачу в список."""
         item = QListWidgetItem()
         self.task_list.addItem(item)
@@ -126,10 +126,10 @@ class TaskManagerUI(QWidget):
         task_widget = QWidget()
         task_layout = QHBoxLayout()
 
-        # Чекбокс для отметки выполненной задачи
-        checkbox = QCheckBox()
-        checkbox.setFixedSize(QSize(20, 20))
-        task_layout.addWidget(checkbox)
+        # Срочность задачи
+        level_icon = QLabel()
+        level_icon.setPixmap(self.get_level_icon(task_level))
+        task_layout.addWidget(level_icon)
 
         # Текст задачи
         task_label = QLineEdit(task_text)
@@ -145,7 +145,7 @@ class TaskManagerUI(QWidget):
         # Кнопка "Редактировать"
         edit_button = QPushButton("✏️")
         edit_button.setFixedSize(QSize(30, 30))
-        edit_button.clicked.connect(lambda: self.edit_task(task_label, task_description_edit))
+        edit_button.clicked.connect(lambda: self.edit_task(task_label, task_description_edit, level_icon))
         task_layout.addWidget(edit_button)
 
         # Кнопка "Удалить"
@@ -160,7 +160,7 @@ class TaskManagerUI(QWidget):
         self.task_list.setItemWidget(item, task_widget)
 
 
-    def edit_task(self, task_label, task_description_edit):
+    def edit_task(self, task_label, task_description_edit, level_icon):
         """Открывает диалоговое окно для редактирования задачи."""
         dialog = AddTaskDialog(self)
         dialog.task_name_edit.setText(task_label.text())
@@ -171,13 +171,15 @@ class TaskManagerUI(QWidget):
             old_name = task_label.text()
             new_name = task_data["name"]
             new_description = task_data["description"]
+            new_level = task_data["level"]
         
             # Обновляем задачу в базе данных
-            update_tasks_in_tasks_db(old_name, new_name, task_description_edit.toPlainText(), new_description)
+            update_tasks_in_tasks_db(old_name, new_name, task_description_edit.toPlainText(), new_description, new_level)
         
             # Обновляем интерфейс сразу
             task_label.setText(new_name)
             task_description_edit.setText(new_description)  # Обновляем содержимое QTextEdit
+            level_icon.setPixmap(self.get_level_icon(new_level))
 
 
     def delete_task(self, task_name, item):
@@ -196,8 +198,18 @@ class TaskManagerUI(QWidget):
     def load_tasks(self):
         """Загружает задачи из базы данных."""
         tasks = load_tasks_from_tasks_db()
-        for name, description in tasks:
-            self.add_task_item(name, description)
+        for name, description, level in tasks:
+            self.add_task_item(name, description, level)
 
         # Обновляем текст в зависимости от наличия задач
         self.update_empty_label()
+    
+
+    def get_level_icon(self, level):
+        """Возвращает иконку в зависимости от уровня срочности."""
+        if level == "Срочно":
+            return QIcon("resources/icons/red_rush.png").pixmap(QSize(30, 30))
+        elif level == "Средне":
+            return QIcon("resources/icons/orange_rush.png").pixmap(QSize(30, 30))
+        else:
+            return QIcon("resources/icons/green_rush.png").pixmap(QSize(30, 30))

@@ -1,10 +1,10 @@
-import sqlite3
-
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLineEdit, QTextEdit, QPushButton, QLabel, QHBoxLayout, QButtonGroup
 )
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon, QFont
+
+from database.db_tasks_manager import is_name_unique
 
 
 class AddTaskDialog(QDialog):
@@ -12,7 +12,7 @@ class AddTaskDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("BED - New Task")
-        self.setFixedSize(325, 450)
+        self.setFixedSize(550, 400)
 
         # Основной макет
         layout = QVBoxLayout(self)
@@ -79,32 +79,62 @@ class AddTaskDialog(QDialog):
 
         # Группа кнопок для уровня сложности
         self.task_level_group = QButtonGroup(self)
-        self.task_level_group.setExclusive(True)  # Только одна иконка может быть выбрана
+        self.task_level_group.setExclusive(True)
 
         # Иконка "Срочно" (красная)
         self.urgent_button = QPushButton()
-        self.urgent_button.setIcon(QIcon("resources/icons/red_clock.png"))
-        self.urgent_button.setIconSize(QSize(30, 30))
+        self.urgent_button.setIcon(QIcon("resources/icons/red_rush.png"))
+        self.urgent_button.setIconSize(QSize(40, 40))
         self.urgent_button.setFixedSize(40, 40)
+        self.urgent_button.setCheckable(True)  # Устанавливаем флаг checkable
         self.urgent_button.clicked.connect(lambda: self.set_level("Срочно"))
+        self.urgent_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(0, 0, 0, 0);
+                border: none;
+            }
+            QPushButton:checked {
+                border-bottom: 3px solid #FD0303;
+            }
+        """)
         self.task_level_group.addButton(self.urgent_button)
         icons_layout.addWidget(self.urgent_button)
 
         # Иконка "Средне" (оранжевая)
         self.medium_button = QPushButton()
-        self.medium_button.setIcon(QIcon("resources/icons/orange_clock.png"))
-        self.medium_button.setIconSize(QSize(30, 30))
+        self.medium_button.setIcon(QIcon("resources/icons/orange_rush.png"))
+        self.medium_button.setIconSize(QSize(40, 40))
         self.medium_button.setFixedSize(40, 40)
+        self.medium_button.setCheckable(True)  # Устанавливаем флаг checkable
         self.medium_button.clicked.connect(lambda: self.set_level("Средне"))
+        self.medium_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(0, 0, 0, 0);
+                border: none;
+            }
+            QPushButton:checked {
+                border-bottom: 3px solid #FFC000;
+            }
+        """)
         self.task_level_group.addButton(self.medium_button)
         icons_layout.addWidget(self.medium_button)
 
         # Иконка "Не срочно" (зеленая)
         self.not_urgent_button = QPushButton()
-        self.not_urgent_button.setIcon(QIcon("resources/icons/green_clock.png"))
-        self.not_urgent_button.setIconSize(QSize(30, 30))
+        self.not_urgent_button.setIcon(QIcon("resources/icons/green_rush.png"))
+        self.not_urgent_button.setIconSize(QSize(40, 40))
         self.not_urgent_button.setFixedSize(40, 40)
+        self.not_urgent_button.setCheckable(True)  # Устанавливаем флаг checkable
         self.not_urgent_button.clicked.connect(lambda: self.set_level("Не срочно"))
+        self.not_urgent_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(0, 0, 0, 0);
+                border: none;
+            }
+            QPushButton:checked {
+                border-bottom: 3px solid #19A97E;
+            }
+        """)
         self.task_level_group.addButton(self.not_urgent_button)
         icons_layout.addWidget(self.not_urgent_button)
 
@@ -113,7 +143,7 @@ class AddTaskDialog(QDialog):
         layout.addLayout(task_level_layout)
 
         # Добавляем пустое пространство между иконками и кнопкой "ОК"
-        layout.addStretch(1)  # Добавляем растягивающийся элемент
+        layout.addStretch(1)
 
         # Кнопка "ОК"
         button_box = QHBoxLayout()
@@ -151,6 +181,8 @@ class AddTaskDialog(QDialog):
         # Инициализация выбранного уровня
         self.selected_level = None
 
+        self.setLayout(layout)
+
 
     def set_level(self, level):
         """Устанавливает выбранный уровень сложности."""
@@ -177,7 +209,7 @@ class AddTaskDialog(QDialog):
             return
 
         # Проверка на уникальность имени в базе данных
-        if not self.is_name_unique(task_name):
+        if not is_name_unique(task_name):
             self.task_name_edit.setStyleSheet("""
                 QLineEdit {
                     background-color: rgba(0, 0, 0, 0.4);
@@ -203,19 +235,6 @@ class AddTaskDialog(QDialog):
         """)
         self.error_label.setVisible(False)
         super().accept()
-
-
-    def is_name_unique(self, task_name):
-        """
-        Проверяет, уникально ли имя задачи в базе данных.
-        Возвращает True, если имя уникально, и False, если имя уже существует.
-        """
-        connection = sqlite3.connect("tasks.db")
-        cursor = connection.cursor()
-        cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ?", (task_name,))
-        count = cursor.fetchone()[0]
-        connection.close()
-        return count == 0
 
 
     def get_task_data(self):
