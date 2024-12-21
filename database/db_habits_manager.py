@@ -30,12 +30,23 @@ def create_habits_db():
 
 
 def add_new_habit(name):
-    """Добавляет новую привычку в базу данных."""
+    """Добавляет новую привычку в базу данных или возвращает существующую."""
     connection = sqlite3.connect(HABITS_DB_NAME)
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO habits (name) VALUES (?)", (name,))
-    habit_id = cursor.lastrowid
-    connection.commit()
+
+    # Проверяем, существует ли привычка с таким именем
+    cursor.execute("SELECT id FROM habits WHERE name = ?", (name,))
+    result = cursor.fetchone()
+
+    if result:
+        # Если привычка уже существует, возвращаем её ID
+        habit_id = result[0]
+    else:
+        # Если привычка не существует, создаем новую запись
+        cursor.execute("INSERT INTO habits (name) VALUES (?)", (name,))
+        habit_id = cursor.lastrowid
+        connection.commit()
+
     connection.close()
     return habit_id
 
@@ -79,11 +90,28 @@ def update_checkpoint(habit_id, year, month, day, checked):
     """Обновляет состояние чекпоинта."""
     connection = sqlite3.connect(HABITS_DB_NAME)
     cursor = connection.cursor()
+
+    # Проверяем, существует ли уже чекпоинт для указанной даты
     cursor.execute("""
-        UPDATE habit_checkpoints
-        SET checked = ?
+        SELECT id FROM habit_checkpoints
         WHERE habit_id = ? AND year = ? AND month = ? AND day = ?
-    """, (checked, habit_id, year, month, day))
+    """, (habit_id, year, month, day))
+    result = cursor.fetchone()
+
+    if result:
+        # Если чекпоинт существует, обновляем его состояние
+        cursor.execute("""
+            UPDATE habit_checkpoints
+            SET checked = ?
+            WHERE habit_id = ? AND year = ? AND month = ? AND day = ?
+        """, (checked, habit_id, year, month, day))
+    else:
+        # Если чекпоинт не существует, создаем новый
+        cursor.execute("""
+            INSERT INTO habit_checkpoints (habit_id, year, month, day, checked)
+            VALUES (?, ?, ?, ?, ?)
+        """, (habit_id, year, month, day, checked))
+
     connection.commit()
     connection.close()
 

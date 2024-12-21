@@ -9,9 +9,9 @@ from PySide6.QtGui import QIcon
 from datetime import datetime, timedelta
 
 from database.db_habits_manager import (
-    create_habits_db, add_new_habit, add_habits_checkpoint,
+    create_habits_db, add_new_habit,
     get_all_habits, get_all_habits_checkpoints, update_checkpoint,
-    delete_habit_from_db 
+    delete_habit_from_db
 )
 
 
@@ -37,6 +37,9 @@ class HabitsDialogUI(QDialog):
         super().__init__(parent)
         self.setWindowTitle("BED - Habits Tracker")
         self.setFixedSize(900, 600)
+
+        # Создаем таблицы в базе данных, если их нет
+        create_habits_db()
 
         # Основной макет
         self.layout = QVBoxLayout()
@@ -92,6 +95,8 @@ class HabitsDialogUI(QDialog):
         # Счетчик для квадратных виджетов
         self.square_counter = 0
 
+        # Загружаем привычки из базы данных
+        self.load_habits()
 
     def add_square_widget(self):
         """Добавляет квадратный виджет в макет."""
@@ -119,24 +124,17 @@ class HabitsDialogUI(QDialog):
         square_layout.addWidget(month_name_label, 1, 0, 1, 7)
 
         # Добавляем чекпоинты для каждого дня текущего месяца
-        self.add_checkpoints(square_layout)
+        checkboxes = self.add_checkpoints(square_layout)
 
-        # Кнопки "Редактировать", "Сохранить" и "Удалить"
+        # Кнопки "Редактировать" и "Удалить"
         buttons_layout = QHBoxLayout()
         square_layout.addLayout(buttons_layout, 12, 0, 1, 7)
 
         # Кнопка "Редактировать"
         edit_habit = QPushButton("✏️")
         edit_habit.setFixedSize(QSize(30, 30))
-        edit_habit.clicked.connect(lambda: self.edit_habit(habit_label, save_habit))
+        edit_habit.clicked.connect(lambda: self.edit_habit(habit_label))
         buttons_layout.addWidget(edit_habit)
-
-        # Кнопка "Сохранить"
-        save_habit = QPushButton("✔️")
-        save_habit.setFixedSize(QSize(30, 30))
-        save_habit.clicked.connect(lambda: self.save_habit(habit_label))
-        save_habit.setEnabled(False)  # Кнопка "Сохранить" изначально неактивна
-        buttons_layout.addWidget(save_habit)
 
         # Кнопка "Удалить"
         delete_habit = QPushButton("❌")
@@ -157,7 +155,9 @@ class HabitsDialogUI(QDialog):
         # Если квадратов больше 3 в строке, добавляем новую строку
         if self.square_counter % 3 == 0:
             self.grid_layout.setRowStretch(row, 1)
-
+        
+        # Возвращаем созданный виджет
+        return square_widget
 
     def add_checkpoints(self, layout):
         """Добавляет чекпоинты для каждого дня текущего месяца."""
@@ -169,6 +169,8 @@ class HabitsDialogUI(QDialog):
         current_date = month_start
         row = 2  # Начинаем со второй строки (после поля ввода)
         col = 0
+
+        checkboxes = []
 
         while current_date <= month_end:
             # Создаем чекпоинт
@@ -197,6 +199,8 @@ class HabitsDialogUI(QDialog):
             layout.addWidget(checkbox, row, col)
             layout.addWidget(day_label, row + 1, col)
 
+            checkboxes.append(checkbox)
+
             col += 1
             if col == 7:
                 col = 0
@@ -204,21 +208,74 @@ class HabitsDialogUI(QDialog):
 
             current_date += timedelta(days=1)
 
+        return checkboxes
 
-    def edit_habit(self, habit_label, save_button):
+    def edit_habit(self, habit_label):
         """Метод для редактирования карточки привычки."""
         habit_label.setReadOnly(False)
         habit_label.setFocus()
-        save_button.setEnabled(True)
-
-
-    def save_habit(self, habit_label):
-        """Метод для сохранения данных карточки привычки."""
-        habit_label.setReadOnly(True)
-
 
     def delete_habit(self, square_widget):
         """Метод для удаления карточки привычки."""
+        # Удаляем привычку из базы данных
+        habit_label = square_widget.findChild(QLineEdit)
+        habit_name = habit_label.text() or "Новая привычка"
+        habit_id = add_new_habit(habit_name)  # Получаем ID привычки
+        delete_habit_from_db(habit_id)  # Удаляем привычку из базы данных
+
+        # Удаляем виджет из интерфейса
         self.grid_layout.removeWidget(square_widget)
         square_widget.deleteLater()
         self.square_counter -= 1
+
+    def load_habits(self):
+        """Загружает привычки из базы данных."""
+        habits = get_all_habits()  # Получаем все привычки из базы данных
+        today = datetime.today()
+
+        for habit in habits:
+            habit_id, habit_name = habit
+
+            # Добавляем квадратный виджет
+            square_widget = self.add_square_widget()
+
+            # Находим поле ввода названия привычки
+            habit_label = square_widget.findChild(QLineEdit)
+            habit_label.setText(habit_name)  # Устанавливаем название привычки
+
+            # Получаем чекпоинты для текущего месяца и года
+            checkpoints = get_all_habits_checkpoints(habit_id, today.year, today.month)
+
+            # Находим все чекпоинты в виджете
+            checkboxes = square_widget.findChildren(QCheckBox)
+
+            # Устанавливаем состояние чекпоинтов
+            for day, checked in checkpoints:
+                if day <= len(checkboxes):  # Проверяем, что день существует
+                    checkboxes[day - 1].setChecked(checked == 1)
+
+    def closeEvent(self, event):
+        """Сохраняет данные в базу данных при закрытии окна."""
+        self.save_habits()
+        event.accept()
+
+    def save_habits(self):
+        """Обновляет состояние всех привычек и их чекпоинтов в базе данных."""
+        # Проходим по всем квадратным виджетам
+        for i in range(self.grid_layout.count()):
+            widget = self.grid_layout.itemAt(i).widget()
+            if isinstance(widget, QFrame):
+                # Извлекаем данные из виджета
+                habit_label = widget.findChild(QLineEdit)
+                checkboxes = widget.findChildren(QCheckBox)
+
+                # Название привычки
+                habit_name = habit_label.text() or "Новая привычка"
+
+                # Получаем ID привычки из базы данных
+                habit_id = add_new_habit(habit_name)
+
+                # Обновляем чекпоинты в базе данных
+                today = datetime.today()
+                for day, checkbox in enumerate(checkboxes, start=1):
+                    update_checkpoint(habit_id, today.year, today.month, day, int(checkbox.isChecked()))
