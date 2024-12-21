@@ -85,7 +85,7 @@ class HabitsDialogUI(QDialog):
         """Добавляет квадратный виджет в макет."""
         # Создаем квадратный виджет
         square_widget = QFrame()
-        square_widget.setFixedSize(250, 250)  # Размер квадрата
+        square_widget.setFixedSize(250, 300)  # Размер квадрата
         square_widget.setStyleSheet("background-color: rgba(255, 255, 255, 0); border-radius: 15px; border: 1px solid white; color: white;")
 
         # Внутренний макет для квадрата
