@@ -64,7 +64,7 @@ class NotificationDialogUI(QDialog):
         layout.addWidget(self.help_label)
 
         # Увеличиваем расстояние между полем ввода и кнопками
-        layout.addSpacing(15)  # Добавляем больший отступ
+        layout.addSpacing(15)
 
         # Кнопки "Сохранить" и "Изменить"
         button_layout = QHBoxLayout()
