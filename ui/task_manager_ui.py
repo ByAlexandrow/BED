@@ -1,12 +1,15 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QListWidget, QListWidgetItem, QPushButton, QHBoxLayout, QLabel, QCheckBox, QTextEdit, QLineEdit
+    QWidget, QVBoxLayout, QListWidget,
+    QListWidgetItem, QPushButton, QHBoxLayout,
+    QLabel, QTextEdit, QLineEdit
 )
 from PySide6.QtCore import QTimer, QTime, QSize, Qt
 from PySide6.QtGui import QIcon
 
 from database.db_tasks_manager import (
-    create_tasks_db, add_tasks_to_tasks_db, load_tasks_from_tasks_db,
-    update_tasks_in_tasks_db, delete_tasks_from_tasks_db
+    create_tasks_db, add_tasks_to_tasks_db,
+    load_tasks_from_tasks_db, update_tasks_in_tasks_db,
+    delete_tasks_from_tasks_db, is_name_unique, get_task_id_by_name
 )
 
 from ui.add_task_dialog_ui import AddTaskDialog
@@ -97,7 +100,7 @@ class TaskManagerUI(QWidget):
         if dialog.exec() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
             self.add_task_item(task_data["name"], task_data["description"], task_data["level"])
-            add_tasks_to_tasks_db(task_data["name"], task_data["description"], task_data["level"])  # Добавляем задачу в базу данных
+            add_tasks_to_tasks_db(task_data["name"], task_data["description"], task_data["level"])
 
 
     def update_time(self):
@@ -162,7 +165,7 @@ class TaskManagerUI(QWidget):
 
     def edit_task(self, task_label, task_description_edit, level_icon):
         """Открывает диалоговое окно для редактирования задачи."""
-        dialog = AddTaskDialog(self)
+        dialog = AddTaskDialog(self, original_task_name=task_label.text())
         dialog.task_name_edit.setText(task_label.text())
         dialog.task_description_edit.setText(task_description_edit.toPlainText())  # Устанавливаем текущее описание
 
@@ -172,14 +175,22 @@ class TaskManagerUI(QWidget):
             new_name = task_data["name"]
             new_description = task_data["description"]
             new_level = task_data["level"]
-        
+
+            # Получаем task_id текущей задачи
+            task_id = get_task_id_by_name(old_name)
+
+            # Проверяем, уникально ли новое имя (исключая текущую задачу)
+            if not is_name_unique(new_name, task_id):
+                self.show_error("Такое имя уже существует")
+                return
+
             # Обновляем задачу в базе данных
             update_tasks_in_tasks_db(old_name, new_name, task_description_edit.toPlainText(), new_description, new_level)
-        
+
             # Обновляем интерфейс сразу
             task_label.setText(new_name)
             task_description_edit.setText(new_description)  # Обновляем содержимое QTextEdit
-            level_icon.setPixmap(self.get_level_icon(new_level))
+            level_icon.setPixmap(self.get_level_icon(new_level))  # Обновляем иконку уровня
 
 
     def delete_task(self, task_name, item):

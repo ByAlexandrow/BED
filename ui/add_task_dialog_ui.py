@@ -8,7 +8,7 @@ from database.db_tasks_manager import is_name_unique
 
 
 class AddTaskDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, original_task_name=None):
         super().__init__(parent)
 
         self.setWindowTitle("BED - New Task")
@@ -181,6 +181,9 @@ class AddTaskDialog(QDialog):
         # Инициализация выбранного уровня
         self.selected_level = None
 
+        # Сохраняем оригинальное имя задачи
+        self.original_task_name = original_task_name
+
         self.setLayout(layout)
 
 
@@ -209,7 +212,7 @@ class AddTaskDialog(QDialog):
             return
 
         # Проверка на уникальность имени в базе данных
-        if not is_name_unique(task_name):
+        if task_name != self.original_task_name and not is_name_unique(task_name):
             self.task_name_edit.setStyleSheet("""
                 QLineEdit {
                     background-color: rgba(0, 0, 0, 0.4);

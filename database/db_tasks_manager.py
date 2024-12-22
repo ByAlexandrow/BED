@@ -26,17 +26,35 @@ def add_tasks_to_tasks_db(name, description, level="Легкий"):
     conn.close()
 
 
-def is_name_unique(task_name):
+def is_name_unique(task_name, task_id=None):
     """
     Проверяет, уникально ли имя задачи в базе данных.
     Возвращает True, если имя уникально, и False, если имя уже существует.
+    Если task_id указан, исключает текущую задачу из проверки.
     """
     connection = sqlite3.connect("db_tasks.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ?", (task_name,))
+
+    if task_id:
+        # Исключаем текущую задачу из проверки
+        cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ? AND id != ?", (task_name, task_id))
+    else:
+        # Проверяем все задачи
+        cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ?", (task_name,))
+
     count = cursor.fetchone()[0]
     connection.close()
     return count == 0
+
+
+def get_task_id_by_name(task_name):
+        """Возвращает идентификатор задачи по её имени."""
+        connection = sqlite3.connect("db_tasks.db")
+        cursor = connection.cursor()
+        cursor.execute("SELECT id FROM tasks WHERE name = ?", (task_name,))
+        result = cursor.fetchone()
+        connection.close()
+        return result[0] if result else None
 
 
 def load_tasks_from_tasks_db():
