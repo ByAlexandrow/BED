@@ -3,11 +3,11 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon, QFont
 
 
-class SettingsButtonUI(QPushButton):
+class NotesButtonUI(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedSize(50, 50)
-        self.setIcon(QIcon("resources/icons/settings.png")) 
+        self.setIcon(QIcon("resources/icons/notes.png")) 
         self.setIconSize(QSize(40, 40))
         self.setStyleSheet("""
             QPushButton {
@@ -20,19 +20,19 @@ class SettingsButtonUI(QPushButton):
         """)
 
 
-class SettingsDialogUI(QDialog):
+class NotesDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("BED - Settings")
+        self.setWindowTitle("BED - Notes")
         self.setFixedSize(900, 600)
 
         layout = QVBoxLayout()
 
-        self.settings_label = QLabel("Settings")
-        self.settings_label.setAlignment(Qt.AlignCenter)
+        self.notes_label = QLabel("Notes")
+        self.notes_label.setAlignment(Qt.AlignCenter)
         font = QFont("Georgia", 12)
-        self.settings_label.setFont(font)
+        self.notes_label.setFont(font)
 
-        layout.addWidget(self.settings_label)
+        layout.addWidget(self.notes_label)
 
         self.setLayout(layout)

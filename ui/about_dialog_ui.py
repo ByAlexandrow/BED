@@ -3,20 +3,34 @@ from PySide6.QtGui import QFont, QIcon, QDesktopServices
 from PySide6.QtCore import Qt, QUrl, QSize
 
 
-class NewsChatDialogUI(QDialog):
+class AboutDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("BED - About")
+        self.setWindowTitle("BED - About creator")
         self.setFixedSize(550, 250)
 
         layout = QVBoxLayout()
 
-        self.label = QLabel("Use this app and join my club\nTry to be better than you are\n\nPROGRESS\nor\nDIE\n\nI'll be in touch with you soon")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.about = QLabel("Egor\n20 y.o\nPython-developer\nWant to make the world better\n")
+        self.about.setAlignment(Qt.AlignCenter)
         font = QFont("Georgia", 12)
-        self.label.setFont(font)
+        self.about.setFont(font)
 
-        layout.addWidget(self.label)
+        layout.addWidget(self.about)
+
+        self.dif_projects = QLabel("Projects")
+        self.dif_projects.setAlignment(Qt.AlignCenter)
+        font = QFont("Georgia", 12)
+        self.dif_projects.setFont(font)
+
+        layout.addWidget(self.dif_projects)
+
+        # Ссылка на сайт Mystery-of-Story
+        self.website_label = QLabel('<a href="https://mystery-of-story.com">Mystery of Story</a>')
+        self.website_label.setAlignment(Qt.AlignCenter)
+        self.website_label.setFont(font)
+        self.website_label.setOpenExternalLinks(True)
+        layout.addWidget(self.website_label)
 
         layout.addSpacing(20)
 

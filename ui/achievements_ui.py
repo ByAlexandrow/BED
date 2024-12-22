@@ -24,15 +24,15 @@ class AchievementsDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("BED - Achievements")
-        self.setFixedSize(500, 600)
+        self.setFixedSize(900, 600)
 
         layout = QVBoxLayout()
 
-        self.label = QLabel("Achievements")
-        self.label.setAlignment(Qt.AlignCenter)
+        self.achievements_label = QLabel("Achievements")
+        self.achievements_label.setAlignment(Qt.AlignCenter)
         font = QFont("Georgia", 12)
-        self.label.setFont(font)
+        self.achievements_label.setFont(font)
 
-        layout.addWidget(self.label)
+        layout.addWidget(self.achievements_label)
 
         self.setLayout(layout)
