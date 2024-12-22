@@ -9,6 +9,7 @@ from ui.footer import Footer
 from ui.settings import SettingsButtonUI, SettingsDialogUI
 from ui.notification_ui import NotificationButtonUI, NotificationDialogUI
 from ui.habits_tracker_ui import HabitsButtonUI, HabitsDialogUI
+from ui.achievements_ui import AchievementsButtonUI, AchievementsDialogUI
 
 
 class MainWindow(QMainWindow):
@@ -16,9 +17,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowIcon(QIcon('resources/favicon/main.png'))
         self.setWindowTitle("BED - Better Every Day")
-
-        # Устанавливаем размеры окна
-        self.setGeometry(100, 100, 1300, 750)
 
         # Инициализируем интерфейс
         self.init_ui()
@@ -70,23 +68,31 @@ class MainWindow(QMainWindow):
         # Устанавливаем основной виджет в качестве центрального виджета
         self.setCentralWidget(main_layout_widget)
 
-        # Добавляем кнопку трекера привычек в правый нижний угол (над кнопкой настроек)
+        # Добавляем кнопку трекера привычек в правый нижний угол (над кнопкой достижений)
         self.habits_button = HabitsButtonUI(self)
         self.habits_button.clicked.connect(self.show_habits_button)
         self.update_habits_button_position()
+
+        # Добавляем кнопку достижений/статистики/прогресса в правый нижний угол (над кнопкой настроек)
+        self.achievements_button = AchievementsButtonUI(self)
+        self.achievements_button.clicked.connect(self.show_achievements_button)
+        self.update_achievements_button_position()
 
         # Добавляем кнопку нотификации в правый нижний угол (слева от настроек)
         self.notification_button = NotificationButtonUI(self)
         self.notification_button.clicked.connect(self.show_notification_button)
         self.update_notification_button_position()
 
-        # Добавляем кнопку чата в правый нижний угол
+        # Добавляем кнопку настроек в правый нижний угол
         self.settings_button = SettingsButtonUI(self)
         self.settings_button.clicked.connect(self.show_settings_dialog)
         self.update_settings_button_position()
 
         # Подключаем обработчик изменения размеров окна
         self.resizeEvent = self.on_resize
+
+        # Устанавливаем размеры окна
+        self.showMaximized()
 
 
     def show_about_dialog(self):
@@ -107,6 +113,11 @@ class MainWindow(QMainWindow):
     def show_notification_button(self):
         notification_dialog = NotificationDialogUI(self)
         notification_dialog.exec()
+    
+
+    def show_achievements_button(self):
+        achievements_dialog = AchievementsDialogUI(self)
+        achievements_dialog.exec()
     
 
     def show_habits_button(self):
@@ -147,7 +158,7 @@ class MainWindow(QMainWindow):
     
 
     def update_habits_button_position(self):
-        """Обновляет позицию кнопки нотификаций в правом нижнем углу окна."""
+        """Обновляет позицию кнопки трекера привычек в правом нижнем углу окна."""
         # Получаем размеры окна
         window_width = self.width()
         window_height = self.height()
@@ -156,10 +167,26 @@ class MainWindow(QMainWindow):
         button_width = self.habits_button.width()
         button_height = self.habits_button.height()
         x = window_width - button_width - 20
-        y = window_height - button_height - 100
+        y = window_height - button_height - 165
 
         # Устанавливаем пощицию кнопки
         self.habits_button.move(x, y)
+    
+
+    def update_achievements_button_position(self):
+        """Обновляет позицию кнопки достижений в правом нижнем углу окна."""
+        # Получаем размеры окна
+        window_width = self.width()
+        window_height = self.height()
+
+        # Вычисляем позицию кнопки
+        button_width = self.achievements_button.width()
+        button_height = self.achievements_button.height()
+        x = window_width - button_width - 20
+        y = window_height - button_height - 100
+
+        # Устанавливаем пощицию кнопки
+        self.achievements_button.move(x, y)
 
 
     def on_resize(self, event):
@@ -167,4 +194,5 @@ class MainWindow(QMainWindow):
         self.update_settings_button_position()
         self.update_notification_button_position()
         self.update_habits_button_position()
+        self.update_achievements_button_position()
         super().resizeEvent(event)
