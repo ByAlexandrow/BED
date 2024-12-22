@@ -22,11 +22,11 @@ class AddTaskDialog(QDialog):
 
         # Поле для ввода имени задачи
         task_name_layout = QVBoxLayout()
-        self.task_name_label = QLabel("Название")
+        self.task_name_label = QLabel("Title")
         self.task_name_label.setFont(label_font)
         self.task_name_edit = QLineEdit(self)
         self.task_name_edit.setMaxLength(20)
-        self.task_name_edit.setPlaceholderText("Количество символов <= 20")
+        self.task_name_edit.setPlaceholderText("Number of symbold <= 20")
         self.task_name_edit.setStyleSheet("""
             QLineEdit {
                 background-color: rgba(0, 0, 0, 0.4);
@@ -51,10 +51,10 @@ class AddTaskDialog(QDialog):
 
         # Поле для ввода описания задачи
         task_description_layout = QVBoxLayout()
-        self.task_description_label = QLabel("Описание")
+        self.task_description_label = QLabel("Description")
         self.task_description_label.setFont(label_font)
         self.task_description_edit = QTextEdit(self)
-        self.task_description_edit.setPlaceholderText("Количество символов: бесконечность не предел")
+        self.task_description_edit.setPlaceholderText("Number of symbols: endless")
         self.task_description_edit.setStyleSheet("""
             QTextEdit {
                 background-color: rgba(0, 0, 0, 0.4);
@@ -70,7 +70,7 @@ class AddTaskDialog(QDialog):
 
         # Поле установления уровня сложности
         task_level_layout = QVBoxLayout()
-        self.task_level_label = QLabel("Срочность")
+        self.task_level_label = QLabel("Urgency")
         self.task_level_label.setFont(label_font)
         task_level_layout.addWidget(self.task_level_label)
 

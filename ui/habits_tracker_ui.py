@@ -46,7 +46,7 @@ class HabitsDialogUI(QDialog):
 
         # Создаем QScrollArea для добавления скролла
         self.scroll_area = QScrollArea()
-        self.scroll_area.setWidgetResizable(True)  # Разрешаем изменение размера содержимого
+        self.scroll_area.setWidgetResizable(True)
 
         # Виджет для содержимого QScrollArea
         self.scroll_content = QWidget()
@@ -80,7 +80,7 @@ class HabitsDialogUI(QDialog):
                 background-color: rgba(255, 255, 255, 0.2);
             }
         """)
-        self.add_habits_button.clicked.connect(self.add_square_widget)  # Подключаем сигнал
+        self.add_habits_button.clicked.connect(self.add_square_widget)
 
         # Добавляем кнопку в футер и центрируем её
         footer_layout.addStretch()
@@ -103,16 +103,16 @@ class HabitsDialogUI(QDialog):
         """Добавляет квадратный виджет в макет."""
         # Создаем квадратный виджет
         square_widget = QFrame()
-        square_widget.setFixedSize(250, 400)  # Размер квадрата
+        square_widget.setFixedSize(250, 400)
         square_widget.setStyleSheet("background-color: rgba(255, 255, 255, 0); border-radius: 15px; border: 1px solid white; color: white;")
 
-        # Внутренний макет для квадрата (используем QGridLayout для чекпоинтов)
+        # Внутренний макет для квадрата (QGridLayout для чекпоинтов)
         square_layout = QGridLayout()
         square_widget.setLayout(square_layout)
 
         # Поле ввода названия привычки
         habit_label = QLineEdit()
-        habit_label.setPlaceholderText("Название привычки (нельзя изменить)")
+        habit_label.setPlaceholderText("Title (does not change)")
         habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; color: white; padding: 5px;")
         habit_label.setReadOnly(False)
         square_layout.addWidget(habit_label, 0, 0, 1, 7)
@@ -127,7 +127,7 @@ class HabitsDialogUI(QDialog):
         # Добавляем чекпоинты для каждого дня текущего месяца
         checkboxes = self.add_checkpoints(square_layout)
 
-        # Кнопки "Редактировать" и "Удалить"
+        # Расположение кнопки "Удалить"
         buttons_layout = QHBoxLayout()
         square_layout.addLayout(buttons_layout, 12, 0, 1, 7)
 
@@ -163,7 +163,7 @@ class HabitsDialogUI(QDialog):
         month_end = month_end - timedelta(days=month_end.day)
 
         current_date = month_start
-        row = 2  # Начинаем со второй строки (после поля ввода)
+        row = 2
         col = 0
 
         checkboxes = []
@@ -212,8 +212,8 @@ class HabitsDialogUI(QDialog):
         # Удаляем привычку из базы данных
         habit_label = square_widget.findChild(QLineEdit)
         habit_name = habit_label.text() or "Новая привычка"
-        habit_id = add_new_habit(habit_name)  # Получаем ID привычки
-        delete_habit_from_db(habit_id)  # Удаляем привычку из базы данных
+        habit_id = add_new_habit(habit_name)
+        delete_habit_from_db(habit_id)
 
         # Удаляем виджет из интерфейса
         self.grid_layout.removeWidget(square_widget)
@@ -223,7 +223,7 @@ class HabitsDialogUI(QDialog):
 
     def load_habits(self):
         """Загружает привычки из базы данных."""
-        habits = get_all_habits()  # Получаем все привычки из базы данных
+        habits = get_all_habits()
         today = datetime.today()
 
         for habit in habits:
@@ -245,7 +245,7 @@ class HabitsDialogUI(QDialog):
 
             # Устанавливаем состояние чекпоинтов
             for day, checked in checkpoints:
-                if day <= len(checkboxes):  # Проверяем, что день существует
+                if day <= len(checkboxes):
                     checkboxes[day - 1].setChecked(checked == 1)
 
 

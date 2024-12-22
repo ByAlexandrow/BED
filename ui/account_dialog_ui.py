@@ -25,7 +25,7 @@ class AccountDialogUI(QDialog):
         layout.addSpacing(20)
 
         # Текст "Рекомендуем заполнить все поля и установить пароль"
-        self.info_label = QLabel("Рекомендуем заполнить все поля и установить пароль\nЭто необходимо для безопасности ваших данных\nВы можете изменить их в любой момент\nПри входе в приложение потребуется ввести пароль, никнейм и код")
+        self.info_label = QLabel("Fill in the fields and set a password\nThis is necessary for safety\nYou can change it at any time\nEnter your nickname and password when logging in")
         self.info_label.setAlignment(Qt.AlignCenter)
         font = QFont("Arial", 12)
         self.info_label.setFont(font)
@@ -39,15 +39,34 @@ class AccountDialogUI(QDialog):
 
         # Вертикальный макет для пар "текст + поле"
         fields_layout = QVBoxLayout()
-        fields_layout.setSpacing(20)  # Расстояние между элементами
+        fields_layout.setSpacing(20)
+
+        # Поле для ввода никнейма
+        nickname_layout = QVBoxLayout()
+        self.nickname_label = QLabel("Nickname")
+        self.nickname_label.setFont(font)
+        self.nickname_label.setAlignment(Qt.AlignCenter)
+        self.nickname_input = QLineEdit()
+        self.nickname_input.setPlaceholderText("Numbers of symbols <= 10")
+        self.nickname_input.setFixedSize(300, 35)
+        self.nickname_input.setStyleSheet("""
+            QLineEdit {
+                background-color: rgba(0, 0, 0, 0.5);
+                border: 1px solid white;
+                border-radius: 10px;
+            }
+        """)
+        nickname_layout.addWidget(self.nickname_label)
+        nickname_layout.addWidget(self.nickname_input)
+        fields_layout.addLayout(nickname_layout)
 
         # Поле для ввода пароля
         password_layout = QVBoxLayout()
-        self.password_label = QLabel("Пароль")
+        self.password_label = QLabel("Password")
         self.password_label.setFont(font)
         self.password_label.setAlignment(Qt.AlignCenter)
         self.password_input = QLineEdit()
-        self.password_input.setPlaceholderText("Количество символов <= 20")
+        self.password_input.setPlaceholderText("Numbers of symbols <= 20")
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setFixedSize(300, 35)
         self.password_input.setStyleSheet("""
@@ -61,32 +80,13 @@ class AccountDialogUI(QDialog):
         password_layout.addWidget(self.password_input)
         fields_layout.addLayout(password_layout)
 
-        # Поле для ввода никнейма
-        nickname_layout = QVBoxLayout()
-        self.nickname_label = QLabel("Никнейм")
-        self.nickname_label.setFont(font)
-        self.nickname_label.setAlignment(Qt.AlignCenter)
-        self.nickname_input = QLineEdit()
-        self.nickname_input.setPlaceholderText("Количество символов <= 10")
-        self.nickname_input.setFixedSize(300, 35)
-        self.nickname_input.setStyleSheet("""
-            QLineEdit {
-                background-color: rgba(0, 0, 0, 0.5);
-                border: 1px solid white;
-                border-radius: 10px;
-            }
-        """)
-        nickname_layout.addWidget(self.nickname_label)
-        nickname_layout.addWidget(self.nickname_input)
-        fields_layout.addLayout(nickname_layout)
-
         # Поле для ввода кода
         code_layout = QVBoxLayout()
-        self.code_label = QLabel("Код")
+        self.code_label = QLabel("Code")
         self.code_label.setFont(font)
         self.code_label.setAlignment(Qt.AlignCenter)
         self.code_input = QLineEdit()
-        self.code_input.setPlaceholderText("Количество символов <= 5")
+        self.code_input.setPlaceholderText("Numbers of symbols <= 5")
         self.code_input.setFixedSize(300, 35)
         self.code_input.setStyleSheet("""
             QLineEdit {
@@ -100,19 +100,19 @@ class AccountDialogUI(QDialog):
         fields_layout.addLayout(code_layout)
 
         # Добавляем вертикальный макет с полями в центр
-        center_layout.addStretch()  # Растягивающийся элемент для центрирования
+        center_layout.addStretch()
         center_layout.addLayout(fields_layout)
-        center_layout.addStretch()  # Растягивающийся элемент для центрирования
+        center_layout.addStretch()
 
         # Добавляем центрирующий макет в основной макет
         layout.addLayout(center_layout)
 
         # Добавляем растягивающийся элемент перед кнопками, чтобы опустить их ниже
-        layout.addStretch(3)  # Увеличиваем вес растягивающегося элемента
+        layout.addStretch(3)
 
         # Кнопки "Сохранить" и "Изменить"
-        button_layout = QHBoxLayout()  # Горизонтальный макет для кнопок
-        button_layout.addStretch()  # Растягивающийся элемент для центрирования
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
 
         self.save_button = QPushButton()
         self.save_button.setFixedSize(90, 50)
@@ -152,7 +152,7 @@ class AccountDialogUI(QDialog):
 
         button_layout.addWidget(self.change_button)
         button_layout.addWidget(self.save_button)
-        button_layout.addStretch()  # Растягивающийся элемент для центрирования
+        button_layout.addStretch()
         layout.addLayout(button_layout)
 
         # Добавляем растягивающийся элемент снизу, чтобы поднять кнопки выше
