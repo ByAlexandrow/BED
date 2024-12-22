@@ -7,7 +7,6 @@ from ui.account_dialog_ui import AccountDialogUI
 from ui.task_manager_ui import TaskManagerUI
 from ui.footer import Footer
 from ui.settings import SettingsButtonUI, SettingsDialogUI
-from ui.notification_ui import NotificationButtonUI, NotificationDialogUI
 from ui.habits_tracker_ui import HabitsButtonUI, HabitsDialogUI
 from ui.achievements_ui import AchievementsButtonUI, AchievementsDialogUI
 
@@ -78,11 +77,6 @@ class MainWindow(QMainWindow):
         self.achievements_button.clicked.connect(self.show_achievements_button)
         self.update_achievements_button_position()
 
-        # Добавляем кнопку нотификации в правый нижний угол (слева от настроек)
-        self.notification_button = NotificationButtonUI(self)
-        self.notification_button.clicked.connect(self.show_notification_button)
-        self.update_notification_button_position()
-
         # Добавляем кнопку настроек в правый нижний угол
         self.settings_button = SettingsButtonUI(self)
         self.settings_button.clicked.connect(self.show_settings_dialog)
@@ -110,11 +104,6 @@ class MainWindow(QMainWindow):
         settings_dialog.show()
     
 
-    def show_notification_button(self):
-        notification_dialog = NotificationDialogUI(self)
-        notification_dialog.exec()
-    
-
     def show_achievements_button(self):
         achievements_dialog = AchievementsDialogUI(self)
         achievements_dialog.exec()
@@ -139,22 +128,6 @@ class MainWindow(QMainWindow):
 
         # Устанавливаем позицию кнопки
         self.settings_button.move(x, y)
-    
-
-    def update_notification_button_position(self):
-        """Обновляет позицию кнопки нотификаций в правом нижнем углу окна."""
-        # Получаем размеры окна
-        window_width = self.width()
-        window_height = self.height()
-
-        # Вычисляем позицию кнопки
-        button_width = self.notification_button.width()
-        button_height = self.notification_button.height()
-        x = window_width - button_width - 80
-        y = window_height - button_height - 35
-
-        # Устанавливаем пощицию кнопки
-        self.notification_button.move(x, y)
     
 
     def update_habits_button_position(self):
@@ -192,7 +165,6 @@ class MainWindow(QMainWindow):
     def on_resize(self, event):
         """Обрабатывает событие изменения размеров окна."""
         self.update_settings_button_position()
-        self.update_notification_button_position()
         self.update_habits_button_position()
         self.update_achievements_button_position()
         super().resizeEvent(event)
