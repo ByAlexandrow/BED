@@ -86,7 +86,7 @@ class AddTaskDialog(QDialog):
         self.urgent_button.setIcon(QIcon("resources/icons/red_rush.png"))
         self.urgent_button.setIconSize(QSize(40, 40))
         self.urgent_button.setFixedSize(40, 40)
-        self.urgent_button.setCheckable(True)  # Устанавливаем флаг checkable
+        self.urgent_button.setCheckable(True)
         self.urgent_button.clicked.connect(lambda: self.set_level("Срочно"))
         self.urgent_button.setStyleSheet("""
             QPushButton {
@@ -105,7 +105,7 @@ class AddTaskDialog(QDialog):
         self.medium_button.setIcon(QIcon("resources/icons/orange_rush.png"))
         self.medium_button.setIconSize(QSize(40, 40))
         self.medium_button.setFixedSize(40, 40)
-        self.medium_button.setCheckable(True)  # Устанавливаем флаг checkable
+        self.medium_button.setCheckable(True)
         self.medium_button.clicked.connect(lambda: self.set_level("Средне"))
         self.medium_button.setStyleSheet("""
             QPushButton {
@@ -124,7 +124,7 @@ class AddTaskDialog(QDialog):
         self.not_urgent_button.setIcon(QIcon("resources/icons/green_rush.png"))
         self.not_urgent_button.setIconSize(QSize(40, 40))
         self.not_urgent_button.setFixedSize(40, 40)
-        self.not_urgent_button.setCheckable(True)  # Устанавливаем флаг checkable
+        self.not_urgent_button.setCheckable(True)
         self.not_urgent_button.clicked.connect(lambda: self.set_level("Не срочно"))
         self.not_urgent_button.setStyleSheet("""
             QPushButton {

@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
     QLineEdit, QCheckBox, QLabel
 )
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QPalette, QColor
 
 from datetime import datetime, timedelta
 
@@ -104,7 +104,7 @@ class HabitsDialogUI(QDialog):
         # Создаем квадратный виджет
         square_widget = QFrame()
         square_widget.setFixedSize(250, 400)
-        square_widget.setStyleSheet("background-color: rgba(255, 255, 255, 0); border-radius: 15px; border: 1px solid white; color: white;")
+        square_widget.setStyleSheet("background-color: rgba(255, 255, 255, 0); border-radius: 25px; border: 1px solid white; color: white;")
 
         # Внутренний макет для квадрата (QGridLayout для чекпоинтов)
         square_layout = QGridLayout()
@@ -113,13 +113,13 @@ class HabitsDialogUI(QDialog):
         # Поле ввода названия привычки
         habit_label = QLineEdit()
         habit_label.setPlaceholderText("Title (does not change)")
-        habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px; color: white; padding: 5px;")
+        habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 15px; color: white; padding: 5px;")
         habit_label.setReadOnly(False)
         square_layout.addWidget(habit_label, 0, 0, 1, 7)
 
         # Поле текущего месяца
         current_month_label = datetime.today()
-        month_name_label = QLabel(current_month_label.strftime('%B %Y'))
+        month_name_label = QLabel(current_month_label.strftime('%d %B %Y'))
         month_name_label.setStyleSheet("color: white; border: none;")
         month_name_label.setAlignment(Qt.AlignCenter)
         square_layout.addWidget(month_name_label, 1, 0, 1, 7)
@@ -134,6 +134,11 @@ class HabitsDialogUI(QDialog):
         # Кнопка "Удалить"
         delete_habit = QPushButton("❌")
         delete_habit.setFixedSize(QSize(30, 30))
+        delete_habit.setStyleSheet("""
+            QPushButton {
+                border-radius: 15px;
+            }
+        """)
         delete_habit.clicked.connect(lambda: self.delete_habit(square_widget))
         buttons_layout.addWidget(delete_habit)
 
@@ -247,26 +252,54 @@ class HabitsDialogUI(QDialog):
             for day, checked in checkpoints:
                 if day <= len(checkboxes):
                     checkboxes[day - 1].setChecked(checked == 1)
-
+    
 
     def closeEvent(self, event):
         """Сохраняет данные в базу данных при закрытии окна."""
-        self.save_habits()
-        event.accept()
+        if not self.validate_habits():
+            event.ignore()
+        else:
+            self.save_habits()
+            event.accept()
+
+
+    def validate_habits(self):
+        """Проверяет, заполнены ли все поля названий привычек."""
+        valid = True
+        for i in range(self.grid_layout.count()):
+            widget = self.grid_layout.itemAt(i).widget()
+            if isinstance(widget, QFrame):
+                habit_label = widget.findChild(QLineEdit)
+                if not habit_label.text().strip():  # Проверяем, заполнено ли поле
+                    self.highlight_field(habit_label)
+                    valid = False
+        return valid
+
+
+    def highlight_field(self, habit_label):
+        """Подсвечивает поле ввода."""
+        habit_label.setStyleSheet("""
+                QLineEdit {
+                    background-color: rgba(0, 0, 0, 0.4);
+                    border: 1px solid rgba(255, 0, 0, 0.4);
+                    border-radius: 15px;
+                    color: white;
+                    padding: 5px;
+                }
+            """)
+        return habit_label
 
 
     def save_habits(self):
         """Обновляет состояние всех привычек и их чекпоинтов в базе данных."""
-        # Проходим по всем квадратным виджетам
         for i in range(self.grid_layout.count()):
             widget = self.grid_layout.itemAt(i).widget()
             if isinstance(widget, QFrame):
-                # Извлекаем данные из виджета
                 habit_label = widget.findChild(QLineEdit)
                 checkboxes = widget.findChildren(QCheckBox)
 
                 # Название привычки
-                habit_name = habit_label.text() or "Новая привычка"
+                habit_name = habit_label.text().strip() or "Новая привычка"
 
                 # Получаем ID привычки из базы данных
                 habit_id = add_new_habit(habit_name)
@@ -275,5 +308,5 @@ class HabitsDialogUI(QDialog):
                 today = datetime.today()
                 for day, checkbox in enumerate(checkboxes, start=1):
                     update_checkpoint(habit_id, today.year, today.month, day, int(checkbox.isChecked()))
-                
+
                 habit_label.setReadOnly(True)
