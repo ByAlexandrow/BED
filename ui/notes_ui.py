@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QLabel
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon, QFont
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QHBoxLayout, QWidget
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
 
 
 class NotesButtonUI(QPushButton):
@@ -26,13 +26,42 @@ class NotesDialogUI(QDialog):
         self.setWindowTitle("BED - Notes")
         self.setFixedSize(900, 600)
 
-        layout = QVBoxLayout()
+        # Основной макет
+        self.layout = QVBoxLayout()
 
-        self.notes_label = QLabel("Notes")
-        self.notes_label.setAlignment(Qt.AlignCenter)
-        font = QFont("Georgia", 12)
-        self.notes_label.setFont(font)
+        # Создаем футер
+        footer_layout = QHBoxLayout()
+        footer_widget = QWidget()
+        footer_widget.setLayout(footer_layout)
 
-        layout.addWidget(self.notes_label)
+        # Кнопка "Добавить заметку"
+        self.add_notes_button = QPushButton()
+        self.add_notes_button.setFixedSize(100, 30)
+        self.add_notes_button.setIcon(QIcon("resources/icons/add.png"))
+        self.add_notes_button.setIconSize(QSize(30, 30))
+        self.add_notes_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                border: 1px solid white;
+                color: white;
+            }
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        """)
+        self.add_notes_button.clicked.connect(self.add_notes_widget)
 
-        self.setLayout(layout)
+        # Добавляем кнопку в футер и центрируем её
+        footer_layout.addStretch()
+        footer_layout.addWidget(self.add_notes_button)
+        footer_layout.addStretch()
+
+        # Добавляем футер в основной layout
+        self.layout.addWidget(footer_widget)
+
+        self.setLayout(self.layout)
+
+    
+    def add_notes_widget(self):
+        ...
