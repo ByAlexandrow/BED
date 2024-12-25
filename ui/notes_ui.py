@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QHBoxLayout, QWidget
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QTextEdit, QScrollArea
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon
 
@@ -27,12 +27,26 @@ class NotesDialogUI(QDialog):
         self.setFixedSize(900, 600)
 
         # Основной макет
-        self.layout = QVBoxLayout()
+        self.layout = QVBoxLayout(self)
 
-        # Создаем футер
-        footer_layout = QHBoxLayout()
+        # Контейнер для заметок (текстовых редакторов)
+        self.notes_container = QVBoxLayout()
+        self.notes_container.setSpacing(10)
+
+        # Область с прокруткой для заметок
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_widget = QWidget()
+        scroll_widget.setLayout(self.notes_container)
+        scroll_area.setWidget(scroll_widget)
+
+        # Добавляем область с прокруткой в основной макет
+        self.layout.addWidget(scroll_area)
+
+        # Футер с кнопкой "Добавить заметку"
         footer_widget = QWidget()
-        footer_widget.setLayout(footer_layout)
+        footer_layout = QHBoxLayout(footer_widget)
+        footer_layout.setContentsMargins(0, 10, 0, 10)
 
         # Кнопка "Добавить заметку"
         self.add_notes_button = QPushButton()
@@ -44,7 +58,6 @@ class NotesDialogUI(QDialog):
                 background-color: rgba(255, 255, 255, 0.1);
                 border-radius: 15px;
                 border: 1px solid white;
-                color: white;
             }
             QPushButton:hover {
                 background-color: rgba(255, 255, 255, 0.2);
@@ -57,11 +70,30 @@ class NotesDialogUI(QDialog):
         footer_layout.addWidget(self.add_notes_button)
         footer_layout.addStretch()
 
-        # Добавляем футер в основной layout
+        # Добавляем футер в основной макет
         self.layout.addWidget(footer_widget)
 
-        self.setLayout(self.layout)
+        # Переменная для хранения текущего текстового редактора
+        self.current_text_edit = None
 
     
     def add_notes_widget(self):
-        ...
+        # Проверяем, существует ли уже текстовый редактор
+        if self.current_text_edit is not None:
+            return
+
+        # Создаем текстовый редактор
+        self.current_text_edit = QTextEdit()
+        self.current_text_edit.setPlaceholderText("Text of your note is here...")
+        self.current_text_edit.setMinimumHeight(200)
+
+        # Добавляем текстовый редактор в контейнер заметок
+        self.notes_container.addWidget(self.current_text_edit)
+
+        # Подключаем сигнал закрытия редактора (если нужно)
+        self.current_text_edit.destroyed.connect(self.on_text_edit_closed)
+
+
+    def on_text_edit_closed(self):
+        # Очищаем ссылку на текстовый редактор при его закрытии
+        self.current_text_edit = None

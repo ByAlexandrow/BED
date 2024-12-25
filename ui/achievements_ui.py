@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QLabel
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QIcon, QFont
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
 
 
 class AchievementsButtonUI(QPushButton):
@@ -27,12 +27,3 @@ class AchievementsDialogUI(QDialog):
         self.setFixedSize(900, 600)
 
         layout = QVBoxLayout()
-
-        self.achievements_label = QLabel("Achievements")
-        self.achievements_label.setAlignment(Qt.AlignCenter)
-        font = QFont("Georgia", 12)
-        self.achievements_label.setFont(font)
-
-        layout.addWidget(self.achievements_label)
-
-        self.setLayout(layout)
