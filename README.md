@@ -12,7 +12,8 @@ BED - Better Every Day - десктопное приложение на python.
 ### Функции:
 
 1. Task Tracker + Current Time
-2. Habit Tracker + Graphics and Tables
+2. Habit Tracker
+3. Notes
 
 ### Установка:
 
