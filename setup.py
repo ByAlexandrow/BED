@@ -1,10 +1,17 @@
 import sys
-
 from cx_Freeze import setup, Executable
 
 # Определите зависимости
 build_options = {
-    "packages": ["PySide6"],  # Укажите здесь все используемые библиотеки
+    "packages": [
+        "PySide6",  # Основная библиотека для GUI
+        "altgraph",  # Зависимость для PyInstaller (если используется)
+        "cx_Logging",  # Логирование
+        "lief",  # Для работы с бинарными файлами
+        "packaging",  # Для управления версиями и зависимостями
+        "pefile",  # Для работы с PE-файлами
+        "shiboken6",  # Для работы с PySide6
+    ],
     "include_files": [
         ("resources/background", "resources/background"),
         ("resources/favicon", "resources/favicon"),

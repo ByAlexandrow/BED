@@ -89,7 +89,8 @@ class InfoDialogUI(QDialog):
 
         # Добавляем карточки в карусель
         self.add_card("BED\n-\nYour giude to a better life\n\n\n\n\nThis is the list of updates from the first version to the current\n\n\n\n\n\n© 2024-2025 Alexandrow")
-        self.add_card("BED\n-\n1.1\n\n\n1. Info cards\n\n2. Update habits system\n\n3. Notes system\n\n3. Fixed some bugs\n\n\n\n© 2024-2025 Alexandrow")
+        self.add_card("BED\n-\n1.2\n\n\n1. Info cards\n\n2. Update Notes system\n\n2. Fixed some bugs\n\n\n\n© 2024-2025 Alexandrow")
+        self.add_card("BED\n-\n1.1\n\n\n1. Info cards\n\n2. Update Habits system\n\n3. Notes system\n\n4. Fixed some bugs\n\n\n\n© 2024-2025 Alexandrow")
         self.add_card("BED\n-\n1.0\n\n\n1. Habits tracker\n\n2. Tasks tracker\n\n3. About\n\n4. Design\n\n\n\n© 2024-2025 Alexandrow")
 
         self.setLayout(main_layout)
