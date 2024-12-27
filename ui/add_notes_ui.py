@@ -1,8 +1,10 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QWidget, QTextEdit, QScrollArea, QGridLayout
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QWidget, QTextEdit, QScrollArea, QGridLayout, QMessageBox, QLineEdit
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QIcon
 
-from ui.all_notes_ui import AllNotesDialogUI
+from datetime import datetime
+
+from database.db_notes_manager import create_notes_db, add_note
 
 
 class NotesButtonUI(QPushButton):
@@ -25,13 +27,13 @@ class NotesButtonUI(QPushButton):
 class AddNotesDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("BED - Add Notes")
+        self.setWindowTitle("BED - Add Note")
         self.setFixedSize(900, 600)
 
         # Основной макет
         self.layout = QVBoxLayout(self)
 
-        # Контейнер для заметок (текстовых редакторов)
+        # Контейнер для заметок (текстовых редакторов и заголовков)
         self.notes_container = QVBoxLayout()
         self.notes_container.setSpacing(10)
 
@@ -45,17 +47,17 @@ class AddNotesDialogUI(QDialog):
         # Добавляем область с прокруткой в основной макет
         self.layout.addWidget(scroll_area)
 
-        # Футер с кнопкой "Добавить заметку" и "Файлы"
+        # Футер с кнопкой "Сохранить заметку"
         footer_widget = QWidget()
         footer_layout = QGridLayout(footer_widget)
         footer_layout.setContentsMargins(0, 10, 0, 10)
 
-        # Кнопка "Добавить заметку"
-        self.add_notes_button = QPushButton()
-        self.add_notes_button.setFixedSize(100, 30)
-        self.add_notes_button.setIcon(QIcon("resources/icons/add.png"))
-        self.add_notes_button.setIconSize(QSize(30, 30))
-        self.add_notes_button.setStyleSheet("""
+        # Кнопка "Сохранить заметку"
+        self.save_notes_button = QPushButton()
+        self.save_notes_button.setFixedSize(100, 30)
+        self.save_notes_button.setIcon(QIcon("resources/icons/save.png"))
+        self.save_notes_button.setIconSize(QSize(30, 30))
+        self.save_notes_button.setStyleSheet("""
             QPushButton {
                 background-color: rgba(255, 255, 255, 0.1);
                 border-radius: 15px;
@@ -65,60 +67,72 @@ class AddNotesDialogUI(QDialog):
                 background-color: rgba(255, 255, 255, 0.2);
             }
         """)
-        self.add_notes_button.clicked.connect(self.add_notes_widget)
+        self.save_notes_button.clicked.connect(self.save_note)
 
-        # Кнопка "Файлы"
-        self.all_notes_button = QPushButton()
-        self.all_notes_button.setFixedSize(100, 30)
-        self.all_notes_button.setIcon(QIcon("resources/icons/files.png"))
-        self.all_notes_button.setIconSize(QSize(30, 30))
-        self.all_notes_button.setStyleSheet("""
-            QPushButton {
-                background-color: rgba(255, 255, 255, 0.1);
-                border-radius: 15px;
-                border: 1px solid white;
-            }
-            QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-            }
-        """)
-        self.all_notes_button.clicked.connect(self.all_notes)
-
-        # Добавляем кнопку "Добавить заметку" в центр футера
-        footer_layout.addWidget(self.add_notes_button, 0, 1, alignment=Qt.AlignCenter)
-
-        # Добавляем кнопку "Файлы" в правый нижний угол футера
-        footer_layout.addWidget(self.all_notes_button, 0, 1, alignment=Qt.AlignRight | Qt.AlignBottom)
+        # Добавляем кнопку "Сохранить заметку" в центр футера
+        footer_layout.addWidget(self.save_notes_button, 0, 1, alignment=Qt.AlignCenter)
 
         # Добавляем футер в основной макет
         self.layout.addWidget(footer_widget)
 
-        # Переменная для хранения текущего текстового редактора
+        # Переменные для хранения текущего текстового редактора и поля ввода названия
+        self.current_title_edit = None
         self.current_text_edit = None
 
-    
+        # Создаем таблицу при инициализации
+        create_notes_db()
+
+        # Добавляем текстовый редактор и поле ввода названия при инициализации
+        self.add_notes_widget()
+
     def add_notes_widget(self):
-        # Проверяем, существует ли уже текстовый редактор
-        if self.current_text_edit is not None:
+        # Проверяем, существует ли уже текстовый редактор и поле ввода названия
+        if self.current_text_edit is not None or self.current_title_edit is not None:
             return
+
+        # Создаем поле ввода названия заметки
+        self.current_title_edit = QLineEdit()
+        self.current_title_edit.setPlaceholderText("Title (symbols number <= 50)")
+        self.current_title_edit.setMaxLength(50)
+        self.current_title_edit.setStyleSheet("""
+            QLineEdit {
+                padding: 10px;
+                font-size: 15px;
+                border: 1px solid white;
+                border-radius: 15px;
+            }
+        """)
 
         # Создаем текстовый редактор
         self.current_text_edit = QTextEdit()
         self.current_text_edit.setPlaceholderText("Text of your note is here...")
         self.current_text_edit.setMinimumHeight(200)
 
-        # Добавляем текстовый редактор в контейнер заметок
+        # Добавляем поле ввода названия и текстовый редактор в контейнер заметок
+        self.notes_container.addWidget(self.current_title_edit)
         self.notes_container.addWidget(self.current_text_edit)
 
         # Подключаем сигнал закрытия редактора (если нужно)
         self.current_text_edit.destroyed.connect(self.on_text_edit_closed)
+        self.current_title_edit.destroyed.connect(self.on_title_edit_closed)
+
+
+    def save_note(self):
+        if self.current_text_edit is not None and self.current_title_edit is not None:
+            title = self.current_title_edit.text().strip()
+
+            if title == "":
+                title = datetime.now().strftime("Note without a name: %d.%m.%Y")
+            content = self.current_text_edit.toPlainText()
+            add_note(title, content)
+            self.close()
 
 
     def on_text_edit_closed(self):
         # Очищаем ссылку на текстовый редактор при его закрытии
         self.current_text_edit = None
-    
 
-    def all_notes(self):
-        all_notes_dialog = AllNotesDialogUI(self)
-        all_notes_dialog.show()
+
+    def on_title_edit_closed(self):
+        # Очищаем ссылку на поле ввода названия при его закрытии
+        self.current_title_edit = None

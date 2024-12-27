@@ -8,6 +8,7 @@ from ui.task_manager_ui import TaskManagerUI
 from ui.ai_ui import AIButtonUI, AIDialogUI
 from ui.habits_tracker_ui import HabitsButtonUI, HabitsDialogUI
 from ui.add_notes_ui import NotesButtonUI, AddNotesDialogUI
+from ui.notes_ui import AllNotesDialogUI
 from ui.achievements_ui import AchievementsButtonUI, AchievementsDialogUI
 from ui.info_ui import InfoButtonUI, InfoDialogUI
 from ui.settings import SettingsButtonUI, SettingsDialogUI
@@ -128,7 +129,7 @@ class MainWindow(QMainWindow):
     
 
     def show_notes_button(self):
-        notes_dialog = AddNotesDialogUI(self)
+        notes_dialog = AllNotesDialogUI(self)
         notes_dialog.show()
     
 

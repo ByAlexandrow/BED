@@ -97,7 +97,7 @@ class TaskManagerUI(QWidget):
     def show_add_task_dialog(self):
         """Показывает диалоговое окно для добавления задачи."""
         dialog = AddTaskDialog(self)
-        if dialog.exec() == AddTaskDialog.Accepted:
+        if dialog.show() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
             self.add_task_item(task_data["name"], task_data["description"], task_data["level"])
             add_tasks_to_tasks_db(task_data["name"], task_data["description"], task_data["level"])

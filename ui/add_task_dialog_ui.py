@@ -30,7 +30,7 @@ class AddTaskDialog(QDialog):
         self.task_name_edit.setStyleSheet("""
             QLineEdit {
                 background-color: rgba(0, 0, 0, 0.4);
-                border: 1px solid #ccc;
+                border: 1px solid white;
                 border-radius: 15px;
                 color: white;
                 padding: 5px;
@@ -58,7 +58,7 @@ class AddTaskDialog(QDialog):
         self.task_description_edit.setStyleSheet("""
             QTextEdit {
                 background-color: rgba(0, 0, 0, 0.4);
-                border: 1px solid #ccc;
+                border: 1px solid white;
                 border-radius: 15px;
                 color: white;
                 padding: 5px;
