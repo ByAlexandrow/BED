@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QWidget, QTextEdit, QScrollArea, QGridLayout, QMessageBox, QLineEdit
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QTextEdit, QLineEdit
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QIcon
 
 from datetime import datetime
@@ -25,9 +25,12 @@ class NotesButtonUI(QPushButton):
 
 
 class AddNotesDialogUI(QDialog):
+    # Создаем сигнал для обновления списка заметок
+    note_saved = Signal()
+
     def __init__(self, parent=None, note_id=None):
         super().__init__(parent)
-        self.note_id = note_id
+        self.note_id = note_id  # Инициализируем note_id
         self.setWindowTitle("BED - Add Note" if not note_id else "BED - Edit Note")
         self.setFixedSize(900, 600)
 
@@ -36,14 +39,19 @@ class AddNotesDialogUI(QDialog):
 
         # Поле ввода названия заметки
         self.current_title_edit = QLineEdit()
-        self.current_title_edit.setPlaceholderText("Title (symbols number <= 50)")
+        self.current_title_edit.setPlaceholderText("Title (does not change)")
         self.current_title_edit.setMaxLength(50)
         self.current_title_edit.setStyleSheet("""
             QLineEdit {
                 padding: 10px;
-                font-size: 15px;
+                font-size: 20px;
                 border: 1px solid white;
                 border-radius: 15px;
+            }
+            QLineEdit:read-only {
+                background-color: grey;
+                border: 1px solid grey;
+                color: #555;
             }
         """)
         self.layout.addWidget(self.current_title_edit)
@@ -52,6 +60,11 @@ class AddNotesDialogUI(QDialog):
         self.current_text_edit = QTextEdit()
         self.current_text_edit.setPlaceholderText("Text of your note is here...")
         self.current_text_edit.setMinimumHeight(200)
+        self.current_text_edit.setStyleSheet("""
+            QTextEdit {
+                font-size: 15px;
+            }
+        """)
         self.layout.addWidget(self.current_text_edit)
 
         # Кнопка "Сохранить заметку"
@@ -86,6 +99,7 @@ class AddNotesDialogUI(QDialog):
         if note:
             self.current_title_edit.setText(note["title"])
             self.current_text_edit.setPlainText(note["content"])
+            self.current_title_edit.setReadOnly(True)
 
 
     def save_note(self):
@@ -101,4 +115,11 @@ class AddNotesDialogUI(QDialog):
         else:
             add_note(title, content)
 
+        # Блокируем поле ввода названия после сохранения
+        self.current_title_edit.setReadOnly(True)
+
+        # Отправляем сигнал о сохранении заметки
+        self.note_saved.emit()
+
+        # Закрываем окно (опционально, можно убрать, если хотите оставить окно открытым)
         self.close()

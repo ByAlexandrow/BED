@@ -114,6 +114,7 @@ class HabitsDialogUI(QDialog):
         habit_label = QLineEdit()
         habit_label.setPlaceholderText("Title (does not change)")
         habit_label.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 15px; color: white; padding: 5px;")
+        habit_label.setMaxLength(30)
         habit_label.setReadOnly(False)
         square_layout.addWidget(habit_label, 0, 0, 1, 7)
 

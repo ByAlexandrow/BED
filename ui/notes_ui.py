@@ -76,17 +76,20 @@ class AllNotesDialogUI(QDialog):
 
 
     def add_notes(self):
-        all_notes_dialog = AddNotesDialogUI(self)
-        all_notes_dialog.exec_()
-        self.load_notes()
-    
+        """Открывает диалог для добавления новой заметки."""
+        add_dialog = AddNotesDialogUI(self)
+        add_dialog.note_saved.connect(self.load_notes)
+        add_dialog.exec_()
+
 
     def delete_note(self, note_id):
+        """Удаляет заметку и обновляет список."""
         delete_note(note_id)
         self.load_notes()
 
 
     def load_notes(self):
+        """Загружает и отображает все заметки."""
         for i in reversed(range(self.notes_container.count())):
             self.notes_container.itemAt(i).widget().setParent(None)
 
@@ -97,12 +100,10 @@ class AllNotesDialogUI(QDialog):
             note_frame.setFrameShape(QFrame.Panel)
             note_frame.setFixedSize(850, 50)
 
-            # Используем QHBoxLayout для размещения названия и кнопки удаления
             note_layout = QHBoxLayout(note_frame)
             note_layout.setSpacing(5)
             note_layout.setContentsMargins(10, 5, 10, 5)
 
-            # Название заметки
             title_label = QLabel(note["title"])
             title_label.setStyleSheet("""
                 QLabel {

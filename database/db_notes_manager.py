@@ -3,14 +3,13 @@ from datetime import datetime
 
 NOTES_DB_NAME = 'db_notes.db'
 
-# Функция для подключения к базе данных
+
 def get_db_connection():
     conn = sqlite3.connect(NOTES_DB_NAME)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-# Создание таблицы notes
 def create_notes_db():
     conn = get_db_connection()
     conn.execute('''
@@ -26,7 +25,6 @@ def create_notes_db():
     conn.close()
 
 
-# Добавление заметки
 def add_note(title, content):
     conn = get_db_connection()
     conn.execute('''
@@ -36,7 +34,6 @@ def add_note(title, content):
     conn.close()
 
 
-# Обновление заметки
 def update_note(note_id, title, content):
     updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     conn = get_db_connection()
@@ -47,7 +44,6 @@ def update_note(note_id, title, content):
     conn.close()
 
 
-# Удаление заметки
 def delete_note(note_id):
     conn = get_db_connection()
     conn.execute('''
@@ -57,7 +53,6 @@ def delete_note(note_id):
     conn.close()
 
 
-# Получение одной заметки по ID
 def get_note(note_id):
     conn = get_db_connection()
     note = conn.execute('''
@@ -67,7 +62,6 @@ def get_note(note_id):
     return note
 
 
-# Получение всех заметок
 def get_all_notes():
     conn = get_db_connection()
     notes = conn.execute('''
