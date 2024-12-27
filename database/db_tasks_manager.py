@@ -36,10 +36,8 @@ def is_name_unique(task_name, task_id=None):
     cursor = connection.cursor()
 
     if task_id:
-        # Исключаем текущую задачу из проверки
         cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ? AND id != ?", (task_name, task_id))
     else:
-        # Проверяем все задачи
         cursor.execute("SELECT COUNT(*) FROM tasks WHERE name = ?", (task_name,))
 
     count = cursor.fetchone()[0]

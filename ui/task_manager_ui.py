@@ -97,7 +97,7 @@ class TaskManagerUI(QWidget):
     def show_add_task_dialog(self):
         """Показывает диалоговое окно для добавления задачи."""
         dialog = AddTaskDialog(self)
-        if dialog.show() == AddTaskDialog.Accepted:
+        if dialog.exec() == AddTaskDialog.Accepted:
             task_data = dialog.get_task_data()
             self.add_task_item(task_data["name"], task_data["description"], task_data["level"])
             add_tasks_to_tasks_db(task_data["name"], task_data["description"], task_data["level"])
@@ -189,8 +189,8 @@ class TaskManagerUI(QWidget):
 
             # Обновляем интерфейс сразу
             task_label.setText(new_name)
-            task_description_edit.setText(new_description)  # Обновляем содержимое QTextEdit
-            level_icon.setPixmap(self.get_level_icon(new_level))  # Обновляем иконку уровня
+            task_description_edit.setText(new_description)
+            level_icon.setPixmap(self.get_level_icon(new_level))
 
 
     def delete_task(self, task_name, item):

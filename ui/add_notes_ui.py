@@ -30,7 +30,7 @@ class AddNotesDialogUI(QDialog):
 
     def __init__(self, parent=None, note_id=None):
         super().__init__(parent)
-        self.note_id = note_id  # Инициализируем note_id
+        self.note_id = note_id
         self.setWindowTitle("BED - Add Note" if not note_id else "BED - Edit Note")
         self.setFixedSize(900, 600)
 
@@ -115,11 +115,6 @@ class AddNotesDialogUI(QDialog):
         else:
             add_note(title, content)
 
-        # Блокируем поле ввода названия после сохранения
         self.current_title_edit.setReadOnly(True)
-
-        # Отправляем сигнал о сохранении заметки
         self.note_saved.emit()
-
-        # Закрываем окно (опционально, можно убрать, если хотите оставить окно открытым)
         self.close()

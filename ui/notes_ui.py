@@ -115,10 +115,10 @@ class AllNotesDialogUI(QDialog):
             note_layout.addWidget(title_label, stretch=1)
 
             # Кнопка удаления
-            delete_button = QPushButton("❌")
-            delete_button.setFixedSize(30, 30)
-            delete_button.clicked.connect(lambda _, note_id=note["id"]: self.delete_note(note_id))
-            note_layout.addWidget(delete_button)
+            delete_note_button = QPushButton("❌")
+            delete_note_button.setFixedSize(30, 30)
+            delete_note_button.clicked.connect(lambda _, note_id=note["id"]: self.delete_note(note_id))
+            note_layout.addWidget(delete_note_button)
 
             # Добавляем рамку с заметкой в контейнер
             self.notes_container.addWidget(note_frame)
