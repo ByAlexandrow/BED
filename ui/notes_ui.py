@@ -7,6 +7,19 @@ from ui.add_notes_ui import AddNotesDialogUI
 from database.db_notes_manager import get_all_notes, delete_note
 
 
+class NoteFrame(QFrame):
+    def __init__(self, note_id, parent=None):
+        super().__init__(parent)
+        self.note_id = note_id
+
+
+    def mouseDoubleClickEvent(self, event):
+        """Обработчик двойного клика."""
+        edit_dialog = AddNotesDialogUI(self.parent(), self.note_id)
+        edit_dialog.exec_()
+        self.parent().load_notes()
+
+
 class AllNotesDialogUI(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -80,7 +93,7 @@ class AllNotesDialogUI(QDialog):
         notes = get_all_notes()
 
         for note in notes:
-            note_frame = QFrame()
+            note_frame = NoteFrame(note["id"])
             note_frame.setFrameShape(QFrame.Panel)
             note_frame.setFixedSize(850, 50)
 
