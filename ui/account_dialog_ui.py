@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButt
 from PySide6.QtGui import QFont, QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize
 
+from database.db_account_manager import create_account_db, add_account_data, get_all_account_data, update_data
+
 
 class AccountDialogUI(QDialog):
     def __init__(self, parent=None):
@@ -13,7 +15,7 @@ class AccountDialogUI(QDialog):
         layout = QVBoxLayout()
 
         # Добавляем растягивающийся элемент сверху, чтобы поднять текст выше
-        layout.addStretch(1.65)  # Увеличиваем вес растягивающегося элемента
+        layout.addStretch(1.65)
 
         # Иконка
         self.security_icon = QLabel()
@@ -24,7 +26,7 @@ class AccountDialogUI(QDialog):
         # Отступ между иконкой и текстом
         layout.addSpacing(20)
 
-        # Текст "Рекомендуем заполнить все поля и установить пароль"
+        # Текст
         self.info_label = QLabel("Fill in the fields and set a password\nThis is necessary for safety\nYou can change it at any time\nEnter your nickname and password when logging in")
         self.info_label.setAlignment(Qt.AlignCenter)
         font = QFont("Arial", 12)
@@ -160,16 +162,56 @@ class AccountDialogUI(QDialog):
 
         self.setLayout(layout)
 
+        # Создаем таблицу при инициализации
+        create_account_db()
+
+        # Загружаем данные из базы данных при открытии окна
+        self.load_data()
+
+    def load_data(self):
+        """Загружает данные из базы данных и заполняет поля."""
+        data = get_all_account_data()
+        if data:  # Проверяем, есть ли данные
+            self.nickname_input.setText(data[1])  # Никнейм
+            self.password_input.setText(data[2])  # Пароль
+            self.code_input.setText(str(data[3]))  # Код
+            # Делаем поля доступными только для чтения
+            self.nickname_input.setReadOnly(True)
+            self.password_input.setReadOnly(True)
+            self.code_input.setReadOnly(True)
+        else:
+            # Если данных нет, оставляем поля пустыми и редактируемыми
+            self.nickname_input.setReadOnly(False)
+            self.password_input.setReadOnly(False)
+            self.code_input.setReadOnly(False)
+
     def save_data(self):
         """Обработчик для кнопки "Сохранить"."""
         password = self.password_input.text()
         nickname = self.nickname_input.text()
         code = self.code_input.text()
+
+        # Проверяем, есть ли данные в базе
+        data = get_all_account_data()
+        if data:
+            # Если данные есть, обновляем существующую запись
+            update_data(nickname, password, code)
+        else:
+            # Если данных нет, создаем новую запись
+            add_account_data(nickname, password, code)
+
+        # Делаем поля доступными только для чтения
+        self.nickname_input.setReadOnly(True)
+        self.password_input.setReadOnly(True)
+        self.code_input.setReadOnly(True)
+
         print(f"Сохраненные данные: Пароль={password}, Никнейм={nickname}, Код={code}")
 
     def change_data(self):
         """Обработчик для кнопки "Изменить"."""
-        self.password_input.clear()
-        self.nickname_input.clear()
-        self.code_input.clear()
-        print("Данные очищены для изменения.")
+        # Делаем поля редактируемыми
+        self.nickname_input.setReadOnly(False)
+        self.password_input.setReadOnly(False)
+        self.code_input.setReadOnly(False)
+
+        print("Поля доступны для редактирования.")
