@@ -73,10 +73,12 @@ class AddNotesDialogUI(QDialog):
                 font-size: 17px;
             }
             QToolButton:checked {
-                background-color: #45a049;
+                background-color: white;
+                color: black;
+                border: 1px solid black;
             }
             QToolButton:hover {
-                background-color: #66bb6a;
+                background-color: grey;
             }
         """)
         self.toolbar_layout.addWidget(self.bold_button)
@@ -96,10 +98,12 @@ class AddNotesDialogUI(QDialog):
                 font-size: 17px;
             }
             QToolButton:checked {
-                background-color: #45a049;
+                background-color: white;
+                color: black;
+                border: 1px solid black;
             }
             QToolButton:hover {
-                background-color: #66bb6a;
+                background-color: grey;
             }
         """)
         self.toolbar_layout.addWidget(self.italic_button)
@@ -119,10 +123,12 @@ class AddNotesDialogUI(QDialog):
                 font-size: 17px;
             }
             QToolButton:checked {
-                background-color: #45a049;
+                background-color: white;
+                color: black;
+                border: 1px solid black;
             }
             QToolButton:hover {
-                background-color: #66bb6a;
+                background-color: grey;
             }
         """)
         self.toolbar_layout.addWidget(self.underline_button)
@@ -131,7 +137,7 @@ class AddNotesDialogUI(QDialog):
         self.font_combo = QComboBox()
         self.font_combo.addItems(["Arial", "Times New Roman", "Courier New", "Verdana", "Georgia"])
         self.font_combo.currentTextChanged.connect(self.change_font)
-        self.font_combo.setFixedSize(200, 30)  # Устанавливаем размер поля 150x30 пикселей
+        self.font_combo.setFixedSize(200, 30)
         self.font_combo.setStyleSheet("""
             QComboBox {
                 background-color: rgba(0, 0, 0, 0.1);
@@ -139,7 +145,7 @@ class AddNotesDialogUI(QDialog):
                 border: 1px solid white;
                 border-radius: 15px;
                 padding: 5px;
-                font-size: 17px;
+                font-size: 15px;
             }
             QComboBox:hover {
                 border: 1px solid white;
@@ -148,11 +154,13 @@ class AddNotesDialogUI(QDialog):
                 subcontrol-origin: padding;
                 subcontrol-position: top right;
                 width: 20px;
-                border-left: 1px solid #cccccc;
-                border-radius: 5px;
+                border: none;
+                padding: 8px;
             }
             QComboBox::down-arrow {
-                image: url(resources/icons/down_arrow.png);
+                image: url("resources/icons/arrow_down_btn.png");
+                width: 17px;
+                height: 17px;
             }
         """)
         self.toolbar_layout.addWidget(self.font_combo)
@@ -161,6 +169,33 @@ class AddNotesDialogUI(QDialog):
         self.font_size_combo = QComboBox()
         self.font_size_combo.addItems(["10", "12", "14", "16", "18", "20", "24", "28", "32"])
         self.font_size_combo.currentTextChanged.connect(self.change_font_size)
+        # self.font_size_combo.setFixedSize(200, 30)
+        self.font_size_combo.setFixedHeight(30)
+        self.font_size_combo.setStyleSheet("""
+            QComboBox {
+                background-color: rgba(0, 0, 0, 0.1);
+                color: white;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px;
+                font-size: 15px;
+            }
+            QComboBox:hover {
+                border: 1px solid white;
+            }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 20px;
+                border: none;
+                padding: 8px;
+            }
+            QComboBox::down-arrow {
+                image: url("resources/icons/arrow_down_btn.png");
+                width: 17px;
+                height: 17px;
+            }
+        """)
         self.toolbar_layout.addWidget(self.font_size_combo)
 
         self.layout.addLayout(self.toolbar_layout)
