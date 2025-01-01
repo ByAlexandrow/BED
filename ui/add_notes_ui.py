@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QTextEdit, QLineEdit
+from PySide6.QtWidgets import QPushButton, QDialog, QVBoxLayout, QTextEdit, QLineEdit, QHBoxLayout, QToolButton, QComboBox
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QTextCharFormat
 
 from datetime import datetime
 
@@ -25,7 +25,6 @@ class NotesButtonUI(QPushButton):
 
 
 class AddNotesDialogUI(QDialog):
-    # Создаем сигнал для обновления списка заметок
     note_saved = Signal()
 
     def __init__(self, parent=None, note_id=None):
@@ -44,17 +43,127 @@ class AddNotesDialogUI(QDialog):
         self.current_title_edit.setStyleSheet("""
             QLineEdit {
                 padding: 10px;
-                font-size: 20px;
+                font-size: 15px;
                 border: 1px solid white;
                 border-radius: 15px;
             }
             QLineEdit:read-only {
-                background-color: grey;
-                border: 1px solid grey;
-                color: #555;
+                background-color: rgba(0, 0, 0, 0.1);
+                border: 1px solid white;
+                color: white;
             }
         """)
         self.layout.addWidget(self.current_title_edit)
+
+        # Панель инструментов для форматирования текста
+        self.toolbar_layout = QHBoxLayout()
+
+        # Кнопка для жирного текста
+        self.bold_button = QToolButton()
+        self.bold_button.setText("B")
+        self.bold_button.setCheckable(True)
+        self.bold_button.clicked.connect(self.toggle_bold)
+        self.bold_button.setMinimumSize(30, 30)
+        self.bold_button.setStyleSheet("""
+            QToolButton {
+                color: white;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px 10px;
+                font-size: 17px;
+            }
+            QToolButton:checked {
+                background-color: #45a049;
+            }
+            QToolButton:hover {
+                background-color: #66bb6a;
+            }
+        """)
+        self.toolbar_layout.addWidget(self.bold_button)
+
+        # Кнопка для курсива
+        self.italic_button = QToolButton()
+        self.italic_button.setText("I")
+        self.italic_button.setCheckable(True)
+        self.italic_button.clicked.connect(self.toggle_italic)
+        self.italic_button.setMinimumSize(30, 30)
+        self.italic_button.setStyleSheet("""
+            QToolButton {
+                color: white;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px 10px;
+                font-size: 17px;
+            }
+            QToolButton:checked {
+                background-color: #45a049;
+            }
+            QToolButton:hover {
+                background-color: #66bb6a;
+            }
+        """)
+        self.toolbar_layout.addWidget(self.italic_button)
+
+        # Кнопка для подчеркивания
+        self.underline_button = QToolButton()
+        self.underline_button.setText("U")
+        self.underline_button.setCheckable(True)
+        self.underline_button.clicked.connect(self.toggle_underline)
+        self.underline_button.setMinimumSize(30, 30)
+        self.underline_button.setStyleSheet("""
+            QToolButton {
+                color: white;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px 10px;
+                font-size: 17px;
+            }
+            QToolButton:checked {
+                background-color: #45a049;
+            }
+            QToolButton:hover {
+                background-color: #66bb6a;
+            }
+        """)
+        self.toolbar_layout.addWidget(self.underline_button)
+
+        # Выбор шрифта
+        self.font_combo = QComboBox()
+        self.font_combo.addItems(["Arial", "Times New Roman", "Courier New", "Verdana", "Georgia"])
+        self.font_combo.currentTextChanged.connect(self.change_font)
+        self.font_combo.setFixedSize(200, 30)  # Устанавливаем размер поля 150x30 пикселей
+        self.font_combo.setStyleSheet("""
+            QComboBox {
+                background-color: rgba(0, 0, 0, 0.1);
+                color: white;
+                border: 1px solid white;
+                border-radius: 15px;
+                padding: 5px;
+                font-size: 17px;
+            }
+            QComboBox:hover {
+                border: 1px solid white;
+            }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 20px;
+                border-left: 1px solid #cccccc;
+                border-radius: 5px;
+            }
+            QComboBox::down-arrow {
+                image: url(resources/icons/down_arrow.png);
+            }
+        """)
+        self.toolbar_layout.addWidget(self.font_combo)
+
+        # Выбор размера шрифта
+        self.font_size_combo = QComboBox()
+        self.font_size_combo.addItems(["10", "12", "14", "16", "18", "20", "24", "28", "32"])
+        self.font_size_combo.currentTextChanged.connect(self.change_font_size)
+        self.toolbar_layout.addWidget(self.font_size_combo)
+
+        self.layout.addLayout(self.toolbar_layout)
 
         # Текстовый редактор для содержимого заметки
         self.current_text_edit = QTextEdit()
@@ -93,19 +202,66 @@ class AddNotesDialogUI(QDialog):
             self.load_note()
 
 
+    def toggle_bold(self):
+        """Переключает жирный шрифт."""
+        cursor = self.current_text_edit.textCursor()
+        fmt = QTextCharFormat()
+        fmt.setFontWeight(75 if not self.bold_button.isChecked() else 50)
+        cursor.mergeCharFormat(fmt)
+        self.current_text_edit.mergeCurrentCharFormat(fmt)
+
+
+    def toggle_italic(self):
+        """Переключает курсив."""
+        cursor = self.current_text_edit.textCursor()
+        fmt = QTextCharFormat()
+        fmt.setFontItalic(not self.italic_button.isChecked())
+        cursor.mergeCharFormat(fmt)
+        self.current_text_edit.mergeCurrentCharFormat(fmt)
+
+
+    def toggle_underline(self):
+        """Переключает подчеркивание."""
+        cursor = self.current_text_edit.textCursor()
+        fmt = QTextCharFormat()
+        fmt.setFontUnderline(not self.underline_button.isChecked())
+        cursor.mergeCharFormat(fmt)
+        self.current_text_edit.mergeCurrentCharFormat(fmt)
+
+
+    def change_font(self):
+        """Изменяет шрифт."""
+        font = self.font_combo.currentText()
+        cursor = self.current_text_edit.textCursor()
+        fmt = QTextCharFormat()
+        fmt.setFontFamily(font)
+        cursor.mergeCharFormat(fmt)
+        self.current_text_edit.mergeCurrentCharFormat(fmt)
+
+
+    def change_font_size(self):
+        """Изменяет размер шрифта."""
+        size = int(self.font_size_combo.currentText())
+        cursor = self.current_text_edit.textCursor()
+        fmt = QTextCharFormat()
+        fmt.setFontPointSize(size)
+        cursor.mergeCharFormat(fmt)
+        self.current_text_edit.mergeCurrentCharFormat(fmt)
+
+
     def load_note(self):
         """Загружает данные существующей заметки для редактирования."""
         note = get_note(self.note_id)
         if note:
             self.current_title_edit.setText(note["title"])
-            self.current_text_edit.setPlainText(note["content"])
+            self.current_text_edit.setHtml(note["content"])
             self.current_title_edit.setReadOnly(True)
 
 
     def save_note(self):
         """Сохраняет новую заметку или обновляет существующую."""
         title = self.current_title_edit.text().strip()
-        content = self.current_text_edit.toPlainText()
+        content = self.current_text_edit.toHtml()
 
         if not title:
             title = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
