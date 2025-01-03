@@ -81,6 +81,7 @@ class AddNotesDialogUI(QDialog):
                 background-color: grey;
             }
         """)
+        self.bold_button.setChecked(False)
         self.toolbar_layout.addWidget(self.bold_button)
 
         # Кнопка для курсива
@@ -106,6 +107,7 @@ class AddNotesDialogUI(QDialog):
                 background-color: grey;
             }
         """)
+        self.italic_button.setChecked(False)
         self.toolbar_layout.addWidget(self.italic_button)
 
         # Кнопка для подчеркивания
@@ -131,6 +133,7 @@ class AddNotesDialogUI(QDialog):
                 background-color: grey;
             }
         """)
+        self.underline_button.setChecked(False)
         self.toolbar_layout.addWidget(self.underline_button)
 
         # Выбор шрифта
@@ -241,7 +244,7 @@ class AddNotesDialogUI(QDialog):
         """Переключает жирный шрифт."""
         cursor = self.current_text_edit.textCursor()
         fmt = QTextCharFormat()
-        fmt.setFontWeight(75 if not self.bold_button.isChecked() else 50)
+        fmt.setFontWeight(150 if self.bold_button.isChecked() else 50)
         cursor.mergeCharFormat(fmt)
         self.current_text_edit.mergeCurrentCharFormat(fmt)
 
@@ -250,7 +253,7 @@ class AddNotesDialogUI(QDialog):
         """Переключает курсив."""
         cursor = self.current_text_edit.textCursor()
         fmt = QTextCharFormat()
-        fmt.setFontItalic(not self.italic_button.isChecked())
+        fmt.setFontItalic(self.italic_button.isChecked())
         cursor.mergeCharFormat(fmt)
         self.current_text_edit.mergeCurrentCharFormat(fmt)
 
@@ -259,7 +262,7 @@ class AddNotesDialogUI(QDialog):
         """Переключает подчеркивание."""
         cursor = self.current_text_edit.textCursor()
         fmt = QTextCharFormat()
-        fmt.setFontUnderline(not self.underline_button.isChecked())
+        fmt.setFontUnderline(self.underline_button.isChecked())
         cursor.mergeCharFormat(fmt)
         self.current_text_edit.mergeCurrentCharFormat(fmt)
 
